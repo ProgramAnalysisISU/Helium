@@ -1,0 +1,474 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE Read AST from Racket
+CLOSED: [2018-01-04 Thu 14:27]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:07
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE Solve the code snippet problem, again
+CLOSED: [2018-01-05 Fri 20:25]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:07
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+** DONE duplicate snippets??
+CLOSED: [2018-01-05 Fri 20:25]
+** DONE validate AST node
+CLOSED: [2018-01-05 Fri 10:56]
+** DONE generate function snippet on the fly
+CLOSED: [2018-01-08 Mon 00:50]
+** TODO typedef overlaps struct and enum
+** DONE index them
+CLOSED: [2018-01-05 Fri 20:25]
+** DONE static types and funcs
+CLOSED: [2018-01-08 Mon 00:50]
+** TODO internal types
+** TODO inline types (e.g. struct {int a; char b;} c;)
+** DONE func decl
+CLOSED: [2018-01-05 Fri 20:25]
+
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE macro expansion
+CLOSED: [2018-01-08 Mon 00:34]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:07
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+One example: git/attr.c:848
+
+#+begin_src C
+static GIT_PATH_FUNC(git_path_info_attributes, INFOATTRIBUTES_FILE)
+#+end_src
+
+Actually clang knows the underline definition, but using my approach
+(get_source) to retrieve text is, of course, giving me that single
+line, because I use the =getExpandSourceLocation=.
+
+Currently just printing warning, and mark the function as bad in its
+attributes.
+
+
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE All strings should be token. continue, break, etc
+CLOSED: [2018-01-06 Sat 17:29]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:07
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE SHIFTING direction
+CLOSED: [2018-01-08 Mon 00:34]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:08
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+Originally I'm using the approach of getting the source code directly
+from *lexer*, because:
+- type information is hard to construct, especially for arrays,
+  function pointers
+- multiple declaration can be on the same line, overlapped
+- I don't want to go low inside expression
+
+However, macro expansion is not able to be captured in *lexer* level,
+i.e. clang cannot export the expanded thing. And consider:
+- After all I need to implement a type system
+- the trick to rewrite AST for overlapped decls may be worse than
+  doing a precise decl generation
+- it is pretty easy to control the granularity on lisp end
+
+So the decision: go ahead and generate the AST with great detail.
+- below the expressions
+- remove used var and called funcs (but the static attr for func is
+  still useful)
+** DONE type
+CLOSED: [2018-01-08 Mon 00:34]
+** DONE storage class, qualifiers
+CLOSED: [2018-01-08 Mon 00:49]
+** DONE put string_escape into StringSexp::dump
+CLOSED: [2018-01-08 Mon 00:38]
+** DONE create test c file for every AST node
+CLOSED: [2018-01-08 Mon 00:38]
+
+
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE Kernel snippet graph, call graph
+CLOSED: [2018-01-08 Mon 11:39] SCHEDULED: <2018-01-05 Fri>
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:08
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE Generate selection Criteria directly from AST
+CLOSED: [2018-01-17 Wed 19:43] SCHEDULED: <2018-01-05 Fri>
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:08
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+
+** DONE add location information for CFG nodes
+CLOSED: [2018-01-10 Wed 18:13]
+
+** DONE selection
+CLOSED: [2018-01-17 Wed 12:15]
+The random selection method, especially across files, is a bad
+choice. I propose to use several different selection methods to cover
+all interesting cases and real scenarios.
+1. [X] continuous lines, i.e. sliding windows
+2. [X] random lines within functions
+3. [X] syntactic structural selection
+   - loops
+   - selection statements
+   - combine several sequential or nested structures
+4. random token selection within files
+5. random token selection across files
+6. [ ] Real: changed lines in the commits (contain intro-procedure ones)
+7. Real: changed lines mentioned in bug reports
+
+** DONE syntactic patch rewrite (macro system simplify)
+CLOSED: [2018-01-15 Mon 23:41]
+
+
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE [#A] implement syntactic patch algorithm
+CLOSED: [2018-01-10 Wed 16:39] SCHEDULED: <2018-01-05 Fri>
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:08
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE generate code
+CLOSED: [2018-01-10 Wed 17:16]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:08
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE Debug Snippet
+CLOSED: [2018-01-23 Tue 12:08]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:08
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+
+1. [X] for selected AST, get the used IDs:
+   - get-used-snippet-select
+   - get-unbound-vars-select
+2. [X] query the snippets, and get the snippets
+   - get-snippets
+3. [X] build dependence, get all dependent snippets
+   - get-snippet-dep
+4. [ ] [replace outers if necessary]
+5. [ ] [replace duplicate if necessary]
+6. [X] sort snippets based on:
+   - loc in same file
+   - include relationship between files
+7. [X] generate code by:
+   - avoid gen funcs in main.c, but gen their decl
+
+** Header dependencies
+Using gcc, the -MM command can output header dependencies.  This does
+not work because gcc only cares about what .c and .h file the *object
+file* depends on. It does not specify what is the include relationship
+between .h header files.
+
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE compile it, finish the whole framework
+CLOSED: [2018-01-23 Tue 12:08]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:08
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+- [X] test random selection, debug compile error
+- [X] snippet ordering
+- [X] debug snippet in main.h
+
+** TODO verify code generation is same as the original source after preprocessing
+
+
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE Solve the code snippet problem, again
+CLOSED: [2018-01-05 Fri 20:25]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:09
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+** DONE duplicate snippets??
+CLOSED: [2018-01-05 Fri 20:25]
+** DONE validate AST node
+CLOSED: [2018-01-05 Fri 10:56]
+** DONE generate function snippet on the fly
+CLOSED: [2018-01-08 Mon 00:50]
+** TODO typedef overlaps struct and enum
+** DONE index them
+CLOSED: [2018-01-05 Fri 20:25]
+** DONE static types and funcs
+CLOSED: [2018-01-08 Mon 00:50]
+** TODO internal types
+** TODO inline types (e.g. struct {int a; char b;} c;)
+** DONE func decl
+CLOSED: [2018-01-05 Fri 20:25]
+
+
+Archived entries from file /home/hebi/github/helium2/README.org
+
+
+* DONE wrap clang and create AST dump
+CLOSED: [2018-01-04 Thu 11:48]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-23 Tue 12:09
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Steps
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+** clang plugin
+
+call the plugin by
+
+#+begin_example
+clang -IXXX ... -Xclang -load -Xclang /path/to/libhelium.so -Xclang -add-plugin -Xclang helium
+#+end_example
+
+Note that every command is prefixed with -Xclang
+Actually the arguments are
+
+#+begin_example
+clang -load /path/to/helium.so -add-plugin helium
+#+end_example
+
+Adding getActionType, the plugin is run automatically when loaded
+#+begin_example
+clang -load /path/to/helium.so xxx.c
+#+end_example
+
+
+
+* DONE syntactic patch, function must be selected (and renamed)O
+CLOSED: [2018-01-25 Thu 11:18]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-25 Thu 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Stack
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+
+* DONE when linking object, can I specify not to link main function?
+CLOSED: [2018-01-25 Thu 11:18]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-25 Thu 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Stack
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+
+* DONE add include for all the includes of original tu
+CLOSED: [2018-01-25 Thu 11:18]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-25 Thu 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Stack
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+
+
+* Old main.c generation
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-25 Thu 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Stack
+:ARCHIVE_CATEGORY: README
+:END:
+- 0. if it is selected:
+- 1. if it is main function, rename to helium_main
+- 2. otherwise, just generate it
+- 3. if func is not selected, put into helium_dummy_XXX function
+  generate a main function, put callsite to function
+
+* DONE Use decl->print to create the includible tu
+CLOSED: [2018-01-25 Thu 11:18]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-01-25 Thu 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Stack
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: DONE
+:END:
+1. all decls except functions
+2. for functions
+   - if it is static function, just print it out
+   - if it is non-static, print out its declaration
+3. for variables
+   - if it is static, just print it
+   - if it is non-static, print out its declaration
+   - if it is extern, print it out
+
+
+* TODO run experiment, generate tables
+SCHEDULED: <2018-01-06 Sat>
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-04-02 Mon 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Experiment TODOs
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: TODO
+:END:
+
+* TODO write up paper for FSE
+SCHEDULED: <2018-01-06 Sat>
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-04-02 Mon 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Experiment TODOs
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: TODO
+:END:
+
+* CANCELED bit field
+CLOSED: [2018-04-02 Mon 11:11]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-04-02 Mon 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Stack
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: CANCELED
+:END:
+
+* CANCELED offsetof
+CLOSED: [2018-04-02 Mon 11:11]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-04-02 Mon 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Stack
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: CANCELED
+:END:
+
+* CANCELED inline struct, just unconditionally patch (select) it
+CLOSED: [2018-04-02 Mon 11:11]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-04-02 Mon 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Stack
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: CANCELED
+:END:
+
+* CANCELED Research into code clone papers
+CLOSED: [2018-04-02 Mon 11:18]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-04-02 Mon 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Experiment TODOs
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: CANCELED
+:END:
+
+* CANCELED run code clone in kernel
+CLOSED: [2018-04-02 Mon 11:18]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-04-02 Mon 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Experiment TODOs
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: CANCELED
+:END:
+
+* CANCELED read clone segment specification
+CLOSED: [2018-04-02 Mon 11:18]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-04-02 Mon 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Experiment TODOs
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: CANCELED
+:END:
+
+* CANCELED generate test, compare clone
+CLOSED: [2018-04-02 Mon 11:18]
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-04-02 Mon 11:18
+:ARCHIVE_FILE: ~/github/helium2/README.org
+:ARCHIVE_OLPATH: Experiment TODOs
+:ARCHIVE_CATEGORY: README
+:ARCHIVE_TODO: CANCELED
+:END:
+

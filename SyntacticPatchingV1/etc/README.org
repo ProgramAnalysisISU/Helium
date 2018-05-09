@@ -1,0 +1,10 @@
+#+TITLE: Config file
+
+Not found on arch:
+- sys/atomic.h
+- atomic.h
+- mem.h
+- umem.h
+- priv.h
+- ngx_config.h (ngx_xxx.h)
+- glibht.h

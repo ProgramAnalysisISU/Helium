@@ -1,0 +1,12 @@
+#+TITLE: Helium: Dynamic Analysis On Demand
+
+
+Helium is a framework to generate partial programs and run dynamic
+analysis. It features a syntactic patching algorithm that find the
+extra code in addition to the user selection that is necessary for a
+valid partial program. It also features a demand-driven context search
+algorithm to find smaller partial programs that preserve a given
+program property. Please find our paper for technical details.  You
+can find more detail about the code at the
+[[https://helium.lihebi.com][online manual]].
+

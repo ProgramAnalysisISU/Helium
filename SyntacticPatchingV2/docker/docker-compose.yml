@@ -1,0 +1,15 @@
+version: '2'
+services:
+  srcml-server:
+    image: "lihebi/srcml-server"
+  helium:
+    image: "helium"
+    tty: true
+    stdin_open: true
+    # volumes:
+    #   - helium-data:/data
+# volumes:
+#   # create a volume with default
+#   helium-data:
+#     # this must be created externally
+#     external: true

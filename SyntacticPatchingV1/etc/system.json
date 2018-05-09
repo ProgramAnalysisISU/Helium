@@ -1,0 +1,132 @@
+[
+    {"headers": ["stdio.h"],
+     "force": true},
+    {"headers": ["stdlib.h"],
+     "force": true},
+    {"headers": ["stdbool.h"],
+     "force": true},
+    {"headers": ["string.h"],
+     "force": true},
+
+    {"headers": ["sys/time.h"]},
+    {"headers": ["sys/types.h"]},
+    {"headers": ["sys/file.h"]},
+    {"headers": ["limits.h"]},
+    {"headers": ["syslog.h"]},
+    {"headers": ["stdint.h"]},
+    {"headers": ["assert.h"]},
+    {"headers": ["signal.h"]},
+    {"headers": ["errno.h"]},
+    {"headers": ["unistd.h"]},
+    {"headers": ["getopt.h"]},
+    {"headers": ["fcntl.h"]},
+    {"headers": ["ctype.h"]},
+    {"headers": ["sys/wait.h"]},
+    {"headers": ["time.h"]},
+    {"headers": ["regex.h"]},
+    {"headers": ["errno.h"]},
+    {"headers": ["sys/socket.h"]},
+    {"headers": ["sys/un.h"]},
+    {"headers": ["netinet/in.h"]},
+    {"headers": ["netinet/tcp.h"]},
+    {"headers": ["arpa/inet.h"]},
+    {"headers": ["sys/stat.h"]},
+    {"headers": ["sys/uio.h"]},
+    {"headers": ["sys/param.h"]},
+    {"headers": ["sys/mman.h"]},
+    {"headers": ["netdb.h"]},
+    {"headers": ["sys/stat.h"]},
+    {"headers": ["sys/param.h"]},
+    {"headers": ["sys/resource.h"]},
+    {"headers": ["sys/uio.h"]},
+    {"headers": ["stddef.h"]},
+    {"headers": ["glob.h"]},
+    {"headers": ["pcre.h"]},
+    {"headers": ["sys/atomic.h"]},
+    {"headers": ["atomic.h"]},
+    {"headers": ["float.h"]},
+    {"headers": ["mem.h"]},
+    {"headers": ["umem.h"]},
+    {"headers": ["stdarg.h"]},
+    {"headers": ["priv.h"]},
+    {"headers": ["dirent.h"]},
+    {"headers": ["setjmp.h"]},
+    {"headers": ["pthread.h"], "flags": ["-pthread"]},
+    {"headers": ["zlib.h"], "flags": ["-lz"]},
+    {"headers": ["X11/Xlib.h",
+                 "X11/keysym.h",
+                 "X11/extensions/record.h",
+                 "X11/extensions/XTest.h",
+                 "X11/XKBlib.h"
+                ], "flags": ["-lX11"]},
+    {"headers": ["ncurses.h"], "flags": ["-lncurses"]},
+    {"headers": ["curses.h"], "flags": ["-lcurses"]},
+    {"headers": ["pcap.h"], "flags": ["-lpcap"]},
+    {"headers": ["netlink/addr.h",
+                 "netlink/errno.h",
+                 "netlink/route/link.h",
+                 "netlink/route/link/bonding.h",
+                 "netlink/route/link/veth.h",
+                 "netlink/route/route.h"
+                ], "flags": ["-lnl-route-3 -lnl-3"],
+     "include": ["/usr/include/libnl3"]},
+    {"headers": ["termios.h"]},
+    {"headers": ["ldns/ldns.h"], "flags": ["-lldns"]},
+ 
+    {"headers": ["fuse.h"], "flags": ["-lfuse", "-D_FILE_OFFSET_BITS=64"]},
+    {"headers": ["dlfcn.h"], "flags": ["-ldl"]},
+    {"headers": ["sys/ioctl.h"]},
+    {"headers":
+     ["jni.h", "jvmti.h", "jvmticmlr.h"],
+     "include": ["/usr/lib/jvm/java-8-openjdk/include", "/usr/lib/jvm/java-8-openjdk/include/linux"]
+    },
+    {"headers": ["linux/if.h"]},
+    {"headers": ["linux/sockios.h"]},
+    {"headers": ["pwd.h"]},
+    {"headers": ["grp.h"]},
+    {"headers": ["sched.h"]},
+
+    {
+        "headers": [
+            "pango/pango.h",
+            "pango/pangocairo.h"
+        ],
+        "include": ["/usr/include/pango-1.0/"],
+        "flags": ["-lpango-1.0", "-lpangocairo-1.0"]},
+
+
+    {
+        "include": [
+            "/usr/include/glib-2.0",
+            "/usr/lib/glib-2.0/include"
+        ],
+        "headers": ["glib.h"]
+    },
+
+    {
+        "include": ["/usr/include/cairo"],
+        "headers": ["xcb/randr.h", "xcb/xcb.h", "cairo/cairo.h"],
+        "flags": ["-lxcb-randr", "-lxcb", "-lcairo"]
+    },
+
+    {"headers": ["ifaddrs.h"]},
+    {"headers": ["linux/if_link.h"]},
+    {"headers": ["linux/wireless.h"]},
+    {"headers": ["math.h"]},
+    {"headers": ["mntent.h"]},
+    {"headers": ["net/if.h"]},
+    {"headers": ["sys/statvfs.h"]},
+    {"headers": ["sys/sysinfo.h"]},
+    {"headers": ["features.h"]},
+    {"headers": ["inttypes.h"]},
+    {"headers": ["poll.h"]},
+    {"headers": ["stdarg.h"]},
+    {"headers": [""]},
+    
+    {
+        "package": "ruby",
+        "headers": ["ruby.h"],
+        "include": ["/usr/include/ruby-2.4.0", "/usr/include/ruby-2.4.0/x86_64-linux"],
+        "lib": ["-lruby"]
+    }
+]

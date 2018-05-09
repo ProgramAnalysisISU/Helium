@@ -1,0 +1,646 @@
+#+TITLE: BugBench Details
+
+** gzip-1.2.4
+Missing bounds checking.
+from buﬀer is passed through 2 functions, original from cmd argv without checking
+#+BEGIN_SRC C
+static ifname[MAX];
+char *iname;
+strcpy(ifname, iname);
+#+END_SRC
+
+The longer format:
+
+#+BEGIN_SRC C
+local int get_istat(iname, sbuf)
+    char *iname;
+    struct stat *sbuf;
+{
+    int ilen;  /* strlen(ifname) */
+    static char *suffixes[] = {z_suffix, ".gz", ".z", "-z", ".Z", NULL};
+    char **suf = suffixes;
+    char *s;
+#ifdef NO_MULTIPLE_DOTS
+    char *dot; /* pointer to ifname extension, or NULL */
+#endif
+
+    strcpy(ifname, iname);
+// HELIUM MORE CODE
+}
+
+// HELIUM THIS IS THE ONLY PLACE TO CALL get_istat
+local void treat_file(iname)
+    char *iname;
+{
+    /* Accept "-" as synonym for stdin */
+    if (strequ(iname, "-")) {
+	int cflag = to_stdout;
+	treat_stdin();
+	to_stdout = cflag;
+	return;
+    }
+
+    /* Check if the input file is present, set ifname and istat: */
+    if (get_istat(iname, &istat) != OK) return;
+// HELIUM MORE CODE
+}
+
+int main(int argc, char* argv[]) {
+// HELIUM MORE CODE
+        while (optind < argc) {
+	    treat_file(argv[optind++]);
+	}
+// HELIUM MORE CODE
+}
+#+END_SRC
+
+=treat_file= function is called in two places, one from =main=, another from =treat_dir=.
+=treat_dir= is called only from one place, =treat_file=, this is recursive.
+
+Thus the benchmark Helium should ideally output is
+
+#+BEGIN_SRC C
+#  define MAX_PATH_LEN   1024 /* max pathname length */
+char ifname[MAX_PATH_LEN];
+local int get_istat(iname, sbuf)
+    char *iname;
+    struct stat *sbuf;
+{
+    strcpy(ifname, iname);
+// HELIUM MORE CODE
+}
+
+// HELIUM THIS IS THE ONLY PLACE TO CALL get_istat
+local void treat_file(iname)
+    char *iname;
+{
+    /* Check if the input file is present, set ifname and istat: */
+    if (get_istat(iname, &istat) != OK) return;
+// HELIUM MORE CODE
+}
+#+END_SRC
+
+The =main= function is complicated.
+It contains many input treatment operations.
+They will limit the input space (by checking the =argv= values),
+or widen the input space (by introducing new variables).
+But they essentially does not relevant to the bug: the source string is from the command line argument and the bound is not checked.
+
+** bc-1.06
+This suite seems to contain three bugs.
+
+*** bug 1
+Heap buffer overflow.
+
+Wrong bounds checking.
+use the wrong variable for bounds checking
+#+BEGIN_SRC C
+for (; indx < v_count; indx++)
+  arrays[indx] = NULL;
+#+END_SRC
+~indx<a_count~ is mistook for ~indx<v_count~.
+~a_count~ is the number of array identifiers;
+~v_count~ is the current number of variable identifiers.
+
+When ~v_count~ is larger than
+~a_count~ and ~more_arrays~ is called (when current array identifier quota is used up), the bug will be triggered
+
+This is the point that we may find, when the bug is triggered (observable within dynamic symptom), the invariants contain ~a_count < v_count~.
+Otherwise it should not be triggered.
+
+The longer version:
+#+BEGIN_SRC C
+void
+more_arrays ()
+{
+  int indx;
+  int old_count;
+  bc_var_array **old_ary;
+  char **old_names;
+
+  /* Save the old values. */
+  old_count = a_count;
+  old_ary = arrays;
+  old_names = a_names;
+
+  /* Increment by a fixed amount and allocate. */
+  a_count += STORE_INCR;
+  arrays = (bc_var_array **) bc_malloc (a_count*sizeof(bc_var_array *));
+  a_names = (char **) bc_malloc (a_count*sizeof(char *));
+
+  /* Copy the old arrays. */
+  for (indx = 1; indx < old_count; indx++)
+    arrays[indx] = old_ary[indx];
+
+
+  /* Initialize the new elements. */
+  for (; indx < v_count; indx++)
+    arrays[indx] = NULL;
+}
+#+END_SRC
+
+There's one callsite to =more_arrays=:
+
+#+BEGIN_SRC C
+int
+lookup (name, namekind)
+     char *name;
+     int  namekind;
+{
+  id_rec *id;
+
+  /* Warn about non-standard name. */
+  if (strlen(name) != 1)
+    warn ("multiple letter name - %s", name);
+
+  /* Look for the id. */
+  id = find_id (name_tree, name);
+  if (id == NULL)
+    {
+      /* We need to make a new item. */
+      id = (id_rec *) bc_malloc (sizeof (id_rec));
+      id->id = strcopyof (name);
+      id->a_name = 0;
+      id->f_name = 0;
+      id->v_name = 0;
+      insert_id_rec (&name_tree, id);
+    }
+
+  /* Return the correct value. */
+  switch (namekind)
+    {
+      
+    case ARRAY:
+      /* ARRAY variable numbers are returned as negative numbers. */
+      if (id->a_name != 0)
+	{
+	  free (name);
+	  return (-id->a_name);
+	}
+      id->a_name = next_array++;
+      a_names[id->a_name] = name; // ********* BUG 2 *******
+      if (id->a_name < MAX_STORE)
+	{
+	  if (id->a_name >= a_count) // ***** FIX 2: > *******
+	    more_arrays ();
+	  return (-id->a_name);
+	}
+      yyerror ("Too many array variables");
+      exit (1);
+}
+}
+#+END_SRC
+
+=look_up= has tons of call sites, and it seems to be a symbol table.
+Some call sites are in yacc file, constituting the parser.
+
+I can't construct a valid buggy program manually since this bug is pretty complex,
+and I doubt it requires many calls to the function more_array before the bug is triggered.
+The input should also be of good form, in this case a valid mathematics expression, or the program will terminate before trigger the bug.
+It may impose some difficulties for input generation.
+
+*** Bug 2
+Heap buffer overflow.
+In the above =look_up= function, the "bug 2" line is the overflow, while root cause if the "fix 2" line, change from ~>=~ to ~>~.
+
+This example is special because the root cause is below the bug observation point in the same function.
+The bug will manifest in the next (or following) iteration of the function.
+In this case, we may found that all the buggy round has the invariant ~id->f_name == f_count~.
+I need to have some experiment to see if this condition can be triggered.
+If it can, can I safely say this experiment is successful?
+It is successful because it can construct smaller buggy program, and infer the failure invariant condition.
+The fact is, many bugs will only be triggered when some condition is true.
+If we can infer that condition, it should be considered correct?
+
+*** Bug 3
+the bug locates in =bc.c=, which is generated from bison source =bc.y=.
+We should analyze =bc.c= instead of the source =bc.y= because it is not c file.
+But =bc.c= will contain =#line 293 bc.y=
+#+BEGIN_SRC C
+  // in global.h
+  /* Byte code character storage.  Used in many places for generation of code. */
+  EXTERN char genstr[80];
+
+  // in bc.c
+  register YYSTYPE *yyvsp;
+// HELIUM MORE CODE
+case 49 {
+  /* Check auto list against parameter list? */
+  check_params (yyvsp[-5].a_value,yyvsp[0].a_value);
+  sprintf (genstr, "F%d,%s.%s[",
+           lookup(yyvsp[-7].s_value,FUNCTDEF), 
+           arg_str (yyvsp[-5].a_value), arg_str (yyvsp[0].a_value));                        
+}
+#+END_SRC
+
+The parser program seems so complicated, and it should consume some tokens which is hard for input.
+And the program looks strange, because it is generated code from bison.
+E.g. =yyvsp= is a pointer, and the program access the negative =-5= index.
+The memory should be managed carefully by bison, so it is hard to analyze the generated C file alone and construct those memory.
+
+** man-1.5h1
+Static stack array overflow bug.
+
+Wrong bounds checking.
+bounds checking should be ~sizeof(buffer)/sizeof(char*)~
+
+#+begin_src C
+static char *tmp_section_list[100];
+i = 0;
+for (p = colon_sep_section_list; ; p = end+1) {
+  if ((end = strchr (p, ':')) != NULL)
+    *end = '\0';
+  tmp_section_list[i++] = my_strdup (p);
+  if (end == NULL || i+1 == sizeof(tmp_section_list))
+    break;
+}
+#+end_src
+
+The longer version
+
+#+BEGIN_SRC C
+static char **
+get_section_list (void) {
+     int i;
+     char *p;
+     char *end;
+     static char *tmp_section_list[100];
+
+     if (colon_sep_section_list == NULL) {
+	  if ((p = getenv ("MANSECT")) == NULL)
+	       p = getval ("MANSECT");
+	  colon_sep_section_list = my_strdup (p);
+     }
+
+     i = 0;
+     for (p = colon_sep_section_list; ; p = end+1) {
+	  if ((end = strchr (p, ':')) != NULL)
+	       *end = '\0';
+
+	  tmp_section_list[i++] = my_strdup (p);
+
+	  if (end == NULL || i+1 == sizeof(tmp_section_list))
+	       break;
+     }
+
+     tmp_section_list [i] = NULL;
+     return tmp_section_list;
+}
+#+END_SRC
+
+This bug is simple, the for loop will overflow the static stack buffer.
+The error is simply the sizeof is not properly used.
+The bug does not need any more context to perform.
+This should be a good example to make a small program that can have the same bug,
+but it is intro-procedure.
+
+** ncompress-4.2.4
+*Stack array overflow bug*
+
+long version:
+
+#+BEGIN_SRC C
+  void
+  comprexx(fileptr)
+       char    **fileptr;
+  {
+    int             fdin;
+    int             fdout;
+    char    tempname[MAXPATHLEN];
+    strcpy(tempname,*fileptr);
+// HELIUM MORE CODE
+  }
+#+END_SRC
+
+This function is used in two places: one directly from =main= function, which pass the input buffer to the function;
+the other is called in =compdir=, and recursively the only call site is =comprexx= itself.
+
+In the =main= function:
+#+BEGIN_SRC C
+  for (argc--, argv++; argc > 0; argc--, argv++) {
+    // HELIUM LONG CODE
+                        else
+                          {
+                            ,*fileptr++ = *argv;     /* Build input file list */
+                            ,*fileptr = NULL;
+                          } 
+   }
+
+  if (maxbits < INIT_BITS)        maxbits = INIT_BITS;
+  if (maxbits > BITS)             maxbits = BITS;
+
+  if (*filelist != NULL)
+    {
+      for (fileptr = filelist; *fileptr; fileptr++)
+        comprexx(fileptr);
+    }
+  // HELIUM MORE CODE
+#+END_SRC
+
+** polymorph-0.4.0
+This suite contains two bugs.
+*** Bug 1
+global array overflow
+
+#+BEGIN_SRC C
+void grok_commandLine(int argc, char *argv[]){
+	int o;
+
+	while( ( o = getopt( argc, argv, "achtvf:" ) ) != -1 ){
+		switch( o ){
+			case 'a':
+				hidden = 1;
+				break;
+			case 'c':
+				clean = 1;
+				break;
+			case 'f':
+				strcpy( target, optarg );
+				break;
+// HELIUM MORE CODE
+}}}
+#+END_SRC
+
+the =target= buffer is defined globally:
+#+BEGIN_SRC C
+char tmpbuf[MAX], target[MAX], wd[MAX];
+#+END_SRC
+
+and the function is used only in =main= function:
+#+BEGIN_SRC C
+int main(int argc, char *argv[]){
+  char filename[MAX];
+
+  strcpy( target, "" );
+
+  grok_commandLine( argc, argv );
+// HELIUM MORE CODE
+}
+#+END_SRC
+
+*** Bug 2
+Stack array overflow bug
+#+BEGIN_SRC C
+void convert_fileName(char *original){
+	char newname[MAX];
+	char *bslash;
+	int i, error;
+  
+	error = 0;
+	strcpy( newname, "" );
+
+	if( is_fileHidden( original ) && !hidden ) return;
+
+  if( does_nameHaveUppers( original ) ){
+		/* convert the filename */
+		for(i=0;i<strlen(original);i++){
+			if( isupper( original[i] ) ){
+				newname[i] = tolower( original[i] );
+				continue;
+			}
+			newname[i] = original[i];
+		}
+		newname[i] = '\0';
+  }else{
+    strcpy( newname, original );
+    error = -1;
+  }
+// HELIUM MORE CODE
+}
+#+END_SRC
+The for loop which copies from =original= to =newname= one by one will overflow the stack array.
+This function is called twice in the while loop in main function, which gives the input filename to it.
+If the filename is too long, the overflow would happen.
+
+#+BEGIN_SRC C
+int main(int argc, char *argv[]){
+  char filename[MAX];
+
+  strcpy( target, "" );
+
+  grok_commandLine( argc, argv );
+
+  if( strlen(target) != 0 ){
+    convert_fileName( target );
+    goto return_0;
+  }
+
+  /*   move_toNewDir( target ); */
+
+  strcpy( wd, "" );
+  strcpy( filename, "" );
+
+  getcwd( wd, sizeof( wd ) );
+
+  curr_dir = opendir( wd );
+  if( curr_dir == NULL ){
+    fprintf( stderr, "polymorph could not open the current working directory\n" );
+    fprintf( stderr, "maybe you don't have permissions?\n" );
+    fprintf( stderr, "polymorph terminated\n" );
+    exit( 1 );
+  }
+
+  while( ( victim = readdir( curr_dir ) ) != NULL ){
+    /* check to see if victim is a regular file */
+    if( track ){
+      /* work on the actual file */
+      if( stat( victim->d_name, &status ) == -1 ){
+        fprintf( stderr,"polymorph encountered something funky\n" );
+        fprintf( stderr,"polymorph terminated\n" );
+        return( 2 );
+      }
+      if( S_ISREG( status.st_mode ) ){
+        strcpy( filename, victim->d_name );
+        convert_fileName( filename );
+        /* move_toNewDir( filename ); */
+      }
+    }else{
+      /* work on the symlink to the file */
+      if( lstat( victim->d_name, &status ) == -1 ){
+        fprintf( stderr,"polymorph encountered something funky\n" );
+        fprintf( stderr,"polymorph terminated\n" );
+        return( 2 );
+      }
+      if( S_ISREG( status.st_mode ) ){
+        strcpy( filename, victim->d_name );
+        convert_fileName( filename );
+        /* move_toNewDir( filename ); */
+      }
+    }
+  }
+}
+#+END_SRC
+** squid-2.3
+heap overflow
+
+http://www.securiteam.com/unixfocus/5BP0P2A6AY.html
+
+This bug requires some special characters in the url to trigger.
+#+BEGIN_SRC C
+static void
+ftpBuildTitleUrl(FtpStateData * ftpState)
+{
+    request_t *request = ftpState->request;
+    size_t len;
+    char *t;
+    len = 64
+	+ strlen(ftpState->user)
+	+ strlen(ftpState->password)
+	+ strlen(request->host)
+	+ strLen(request->urlpath);
+    t = ftpState->title_url = xcalloc(len, 1);
+    strcat(t, "ftp://");
+    if (strcmp(ftpState->user, "anonymous")) {
+	strcat(t, ftpState->user);
+	strcat(t, "@");
+    }
+    strcat(t, request->host);
+    if (request->port != urlDefaultPort(PROTO_FTP))
+	snprintf(&t[strlen(t)], len - strlen(t), ":%d", request->port);
+    strcat(t, strBuf(request->urlpath));
+    t = ftpState->base_href = xcalloc(len, 1);
+    strcat(t, "ftp://");
+    if (strcmp(ftpState->user, "anonymous")) {
+	strcat(t, rfc1738_escape_part(ftpState->user));
+	if (ftpState->password_url) {
+	    strcat(t, ":");
+	    strcat(t, rfc1738_escape_part(ftpState->password));
+	}
+	strcat(t, "@");
+    }
+    strcat(t, request->host);
+    if (request->port != urlDefaultPort(PROTO_FTP))
+	snprintf(&t[strlen(t)], len - strlen(t), ":%d", request->port);
+    strcat(t, strBuf(request->urlpath));
+    strcat(t, "/");
+}
+#+END_SRC
+
+This function itself can manifest the bug.
+Squid allocates the buffer based on its buffer length (variable len) calculation, which is wrong.
+The calculation does not consider special characters in the url, in which case,
+the allocated buffer is small and causes heap buffer overflow.
+** cvs-1.11.4
+double free
+
+#+BEGIN_SRC C
+static void
+dirswitch (dir, repos)
+    char *dir;
+    char *repos;
+{
+    int status;
+    FILE *f;
+    size_t dir_len;
+
+    server_write_entries ();
+
+    if (error_pending()) return;
+
+    /* Check for bad directory name.
+
+       FIXME: could/should unify these checks with server_pathname_check
+       except they need to report errors differently.  */
+    if (isabsolute (dir))
+    {
+	if (alloc_pending (80 + strlen (dir)))
+	    sprintf (pending_error_text,
+		     "E absolute pathname `%s' illegal for server", dir);
+	return;
+    }
+    if (pathname_levels (dir) > max_dotdot_limit)
+    {
+	if (alloc_pending (80 + strlen (dir)))
+	    sprintf (pending_error_text,
+		     "E protocol error: `%s' has too many ..", dir);
+	return;
+    }
+
+    if (dir_name != NULL)
+	free (dir_name);
+// HELIUM MORE CODE
+}
+#+END_SRC
+
+The problem is, at the end of the above snippet,
+=dir_name= is checked, and free-d if not NULL.
+
+Such kind of bug has two requirements:
+1. After free, it is not set to NULL.
+2. the function should be called several times with the =dir_name= variable bound to the same value.
+
+So when the next time the function is called, =dir_name= is still not NULL, thus freed again.
+This is, to some point, still the same-function manifest bug.
+
+The special for this one is that the two requirement for it to trigger.
+
+It turns out =dirswitch= is called only in =serve_directory=:
+#+BEGIN_SRC C
+static void
+serve_directory (arg)
+    char *arg;
+{
+    int status;
+    char *repos;
+
+    status = buf_read_line (buf_from_net, &repos, (int *) NULL);
+    if (status == 0)
+    {
+	if (!outside_root (repos))
+	    dirswitch (arg, repos);
+	free (repos);
+    }
+// HELIUM MORE CODE
+}
+#+END_SRC
+
+This function's pointer is recorded in =requests= data:
+#+BEGIN_SRC C
+struct request requests[] =
+{
+#ifdef SERVER_SUPPORT
+#define REQ_LINE(n, f, s) {n, f, s}
+#else
+#define REQ_LINE(n, f, s) {n, s}
+#endif
+
+  REQ_LINE("Root", serve_root, RQ_ESSENTIAL | RQ_ROOTLESS),
+  REQ_LINE("Valid-responses", serve_valid_responses,
+	   RQ_ESSENTIAL | RQ_ROOTLESS),
+  REQ_LINE("valid-requests", serve_valid_requests,
+	   RQ_ESSENTIAL | RQ_ROOTLESS),
+  REQ_LINE("Repository", serve_repository, 0),
+  REQ_LINE("Directory", serve_directory, RQ_ESSENTIAL),
+// HELIUM MORE CODE
+}
+#+END_SRC
+
+There're many places that use =requests=, e.g.:
+#+BEGIN_SRC C
+  for (rq = requests; rq->name != NULL; ++rq)
+    {
+      if (strcmp (rq->name, p) == 0)
+        break;
+    }
+
+#+END_SRC
+
+** httpd-2.0.48
+This is data race problem. I think it is hard for our problem.
+** msql-4.1.1
+Atomicity violation
+** mysql-3.23.56
+Atomicity violation
+** mysql-4.1.1
+Atomicity violation
+
+** unrecorded in the benchmark (but listed in the paper)
+- 129.compress
+- cachelib
+- ypserv-2.2
+- proftpd-1.2.9
+- squid-2.4
+- postgresql-7.4.2
+- 099.go
+- httpd2.0.49
+

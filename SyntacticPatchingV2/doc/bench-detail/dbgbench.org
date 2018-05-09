@@ -1,0 +1,798 @@
+#+TITLE: DbgBench Detail
+
+* find
+
+** DONE find1 (66c536bb) [Functional] [parser]
+
+Compile OK on arch, bug present, patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/find/parser.c b/find/parser.c
+index 75bbe693..62d26096 100644
+--- a/find/parser.c
++++ b/find/parser.c
+@@ -3096,12 +3096,13 @@ parse_time (const struct parser_table* entry, char *argv[], int *arg_ptr)
+   struct predicate *our_pred;
+   struct time_val tval;
+   enum comparison_type comp;
+-  const char *timearg;
++  const char *timearg, *orig_timearg;
+   const char *errmsg = "arithmetic overflow while converting %s days to a number of seconds";
+   time_t origin;
+ 
+   if (!collect_arg(argv, arg_ptr, &timearg))
+     return false;
++  orig_timearg = timearg;
+ 
+   /* Decide the origin by previewing the comparison type. */
+   origin = options.cur_day_start;
+@@ -3123,6 +3124,7 @@ parse_time (const struct parser_table* entry, char *argv[], int *arg_ptr)
+        * will set tval.kind. 
+        */
+     }
++  timearg = orig_timearg;
+   
+   if (!get_relative_timestamp(timearg, &tval, origin, DAYSECS, errmsg))
+     return false;
+#+END_SRC
+
+Description: ~get_comp_type~ will increase the pointer timearg, which is
+supposed not to.
+
+Key insights:
+1. ~arg_ptr~ will not influence the result, thus no further to callsite.
+2. ~collect_arg~ is required to init timearg
+3. need to modify the code to get the fault condition: add a new
+   variable ~orig_timeary~, assigned to the old value.
+
+Bug Signature:
+#+BEGIN_SRC C
+ static boolean 
+  parse_time (char *argv[], int *arg_ptr)
+  {
+    enum comparison_type comp;
+    const char *timearg;
+
+    if (get_comp_type(&timearg, &comp))
+      {
+      }
+    if (!get_relative_timestamp(timearg, &tval, origin, DAYSECS, errmsg))
+      return false;
+  }
+#+END_SRC
+
+- Failure condition: ~orig_timearg = timearg~
+- Transfer function:
+  - ~orig_timearg_out = arg_ptr + 1~
+  - ~timearg = arg_ptr + 1~
+- Precondition: null
+
+** DONE find2 (07b941b1) [Buffer Overflow] [parser]
+Compile OK on arch, bug present, patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/find/parser.c b/find/parser.c
+index a087bec4..e6926f44 100644
+--- a/find/parser.c
++++ b/find/parser.c
+@@ -1641,8 +1641,8 @@ insert_regex (char **argv, int *arg_ptr, const struct parser_table *entry, int r
+                                      re);
+   if (error_message)
+     error (1, 0, "%s", error_message);
+-  (*arg_ptr)++;
+   our_pred->est_success_rate = estimate_pattern_match_rate(argv[*arg_ptr], 1);
++  (*arg_ptr)++;
+   return true;
+ }
+
+#+END_SRC
+
+Insights:
+1. the parser of find is called through a parser table (with function
+   pointers in the table), thus there's no calling relationship
+   visible by Helium when doing context search.
+2. Due to above, the arguments of parser functions are assumed to be
+   entry point.
+3. The ~argv[*arg_ptr]~ is used before the failure point, thus set a
+   bound of the input, such that Helium can find the correct
+   signature.
+4. function arguments are retained (to keep function signature
+   consistent), but some arguments are not used (e.g. entry,
+   regex_options)
+
+Bug Signature:
+#+BEGIN_SRC C
+  static boolean
+  parse_regex (const struct parser_table* entry, char **argv, int *arg_ptr)
+  {
+    return insert_regex (argv, arg_ptr, entry, options.regex_options);
+  }
+
+  static boolean
+  insert_regex (char **argv, int *arg_ptr, const struct parser_table *entry, int regex_options)
+  {
+    struct re_pattern_buffer *re;
+    const char *error_message;
+    (*arg_ptr)++;
+    our_pred->est_success_rate = estimate_pattern_match_rate(argv[*arg_ptr], 1);
+  }
+#+END_SRC
+
+- Failure condition: ~*arg_ptr >= sizeof(argv)~
+- Transfer function:
+  - ~*arg_ptr = (*arg_ptr_in) +1~
+  - ~sizeof(argv) = sizeof(argv_in)~
+- Constraint:
+  - ~*arg_ptr_IN < sizeof(argv)~
+- Precondition:
+  - ~(*arg_ptr_IN) >= sizeof(argv_in)-1~
+
+** TODO find3 (183115d0) [Resource Leak] [predicate]
+Compile OK on arch, bug present, patch OK, bug not removed on Arch,
+but removed on Ubuntu.
+
+#+BEGIN_SRC diff
+diff --git a/find/pred.c b/find/pred.c
+index 3acfe9f8..7f00b831 100644
+--- a/find/pred.c
++++ b/find/pred.c
+@@ -662,6 +662,7 @@ impl_pred_exec (const char *pathname,
+       assert (local);
+       free (target);
+     }
++  close(execp->wd_for_exec->desc);
+   return result;
+ }
+
+#+END_SRC
+
+
+Insights:
+1. the predicate functions are also in a pred_table, and call by
+   function pointer. Thus Helium is not able to follow caller. Thus
+   Helium treat the arguments of predicate functions as input.
+2. Due to above, we need to construct data structure (e.g. struct
+   predicate) so that it is valid to pass the execution to the failure
+   point and trigger failure condition. This is essentially input
+   generation.
+3. In the program, the resource leak is manifested by doing the
+   impl_pred_exec multiple times to exaust the file descriptors. This
+   require retrieving back to caller and enter a loop.
+4. The above is not actually needed, because we need to provide a
+   failure condition anyway. The failure condition here is to check
+   whether the file descriptor is released at the end of
+   impl_pred_exec. As long as it is not released, it is a bug, whether
+   manifest or not.
+5. To check the failure condition, we need a call to fcntl funciton:
+   ~fcntl(fd, F_GETFD) != -1~
+
+TODOs remaining:
+1. input generation for the structured data
+2. failure condition and transfer function is not regular
+
+Bug Signature
+#+BEGIN_SRC C
+  bool
+  pred_execdir (const char *pathname,
+                struct stat *stat_buf, struct predicate *pred_ptr)
+  {
+    return impl_pred_exec (state.rel_pathname, stat_buf, pred_ptr);
+  }
+  static bool
+  impl_pred_exec (const char *pathname,
+                  struct stat *stat_buf,
+                  struct predicate *pred_ptr)
+  {
+    struct exec_val *execp = &pred_ptr->args.exec_vec;
+    if (!record_exec_dir (execp))
+      {
+      }
+    HELIUM_assert(fcntl(execp->wd_for_exec->desc, F_GETFD) == -1);
+  }
+#+END_SRC
+
+- Failure condition:
+  - ~fcntl(execp->wd_for_exec->desc, F_GETFD) == -1~
+- Transfer function:
+  - ~execp->wd_for_exec->desc = open(execp_IN->wd_for_exec->desc)~
+- Precondition: null
+
+
+** TODO find4 (c8491c11) [Null Dereference] [parser]
+Compile OK, bug present, patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/find/parser.c b/find/parser.c
+index a707546e..82a56390 100644
+--- a/find/parser.c
++++ b/find/parser.c
+@@ -1313,6 +1313,7 @@ parse_newerXY (const struct parser_table* entry, char **argv, int *arg_ptr)
+           * past the test name (for most other tests, this is already done)
+           */
+          (*arg_ptr)++;
++          if (argv[*arg_ptr] == NULL) return false;
+          
+          our_pred = insert_primary (entry);
+ 
+#+END_SRC
+
+Insights:
+1. The dereference is buried deep in gnulib/quotearg.c through a long
+   list of calls
+2. we can transfer the failure condition to the source code of "find"
+   by taking that quotearg_n_style will dereference the pointer
+   without checking
+
+TODOs remaining
+- "first-order" conditions (i.e. with variables)
+- whether to dig into library calls, or assume the precondition of
+  library call is available
+
+Stack of calls in gnulib/quotearg.c, where quotearg_n_style function
+is called by find, and passed in a null pointer.
+
+#+BEGIN_SRC C
+  static size_t
+  quotearg_buffer_restyled (char *buffer, size_t buffersize,
+                            char const *arg, size_t argsize,
+                            enum quoting_style quoting_style,
+                            struct quoting_options const *o)
+  {
+    for (i = 0;  ! (argsize == SIZE_MAX ? arg[i] == '\0' : i == argsize);  i++)
+  }
+  size_t
+  quotearg_buffer (char *buffer, size_t buffersize,
+                   char const *arg, size_t argsize,
+                   struct quoting_options const *o)
+  {
+    struct quoting_options const *p = o ? o : &default_quoting_options;
+    int e = errno;
+    size_t r = quotearg_buffer_restyled (buffer, buffersize, arg, argsize,
+                                         p->style, p);
+    errno = e;
+    return r;
+  }
+  static char *
+  quotearg_n_options (int n, char const *arg, size_t argsize,
+                      struct quoting_options const *options)
+  {
+      size_t qsize = quotearg_buffer (val, size, arg, argsize, options);
+  }
+  char *
+  quotearg_n_style (int n, enum quoting_style s, char const *arg)
+  {
+    struct quoting_options const o = quoting_options_from_style (s);
+    return quotearg_n_options (n, arg, SIZE_MAX, &o);
+  }
+#+END_SRC
+
+Bug Signature:
+#+BEGIN_SRC C
+  static boolean
+  parse_newerXY (const struct parser_table* entry, char **argv, int *arg_ptr)
+  {
+    struct predicate *our_pred;
+    (*arg_ptr)++;
+    if (!get_date(&our_pred->args.reftime.ts,
+                  argv[*arg_ptr],
+                  &options.start_time))
+      {
+        quotearg_n_style(0, options.err_quoting_style, argv[*arg_ptr]);
+      }
+  }
+#+END_SRC
+
+- Failure condition: ~argv[*arg_ptr] == NULL~
+- Transfer function:
+  - ~*arg_ptr = (*arg_ptr_IN) + 1~
+- Precondition:
+  - ~argv[*arg_ptr_IN+1] = NULL~
+- Constraint:
+  - ~argv[X-1] != NULL~
+
+
+** find5 (b445af98)
+Compile OK on arch, bug present, patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/find/ftsfind.c b/find/ftsfind.c
+index b3d44f8c..9bbfe1a7 100644
+--- a/find/ftsfind.c
++++ b/find/ftsfind.c
+@@ -227,7 +227,6 @@ visit(FTS *p, FTSENT *ent, struct stat *pstat)
+ {
+   struct predicate *eval_tree;
+   
+-  state.curdepth = ent->fts_level;
+   state.have_stat = (ent->fts_info != FTS_NS) && (ent->fts_info != FTS_NSOK);
+   state.rel_pathname = ent->fts_accpath;
+   state.cwd_dir_fd   = p->fts_cwd_fd;
+@@ -489,6 +488,7 @@ consider_visiting(FTS *p, FTSENT *ent)
+ 		quotearg_n_style(0, options.err_quoting_style, ent->fts_path));
+ 	}
+     }
++  state.curdepth = ent->fts_level;
+ 
+   if (mode)
+     {
+#+END_SRC
+
+** find6 (ff248a20)
+Compile OK on arch, bug present, patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/find/find.c b/find/find.c
+index 2c636770..dbe7cc4a 100644
+--- a/find/find.c
++++ b/find/find.c
+@@ -1571,6 +1571,7 @@ process_dir (char *pathname, char *name, int pathlen, struct stat *statp, char *
+   int idx;                     /* Which entry are we on? */
+   struct stat stat_buf;
+   struct savedir_dirinfo *dirinfo;
++  stat_buf.st_ino = -1;
+   
+   subdirs_left = statp->st_nlink - 2; /* Account for name and ".". */
+ 
+@@ -1618,8 +1619,10 @@ process_dir (char *pathname, char *name, int pathlen, struct stat *statp, char *
+               * of what we think we should see later.
+               * If there was no change, the assignments are a no-op.
+               */
+-             dir_ids[dir_curr].dev = stat_buf.st_dev;
+-             dir_ids[dir_curr].ino = stat_buf.st_ino;
++              if (stat_buf.st_ino != -1) {
++                dir_ids[dir_curr].dev = stat_buf.st_dev;
++                dir_ids[dir_curr].ino = stat_buf.st_ino;
++              }
+              break;
+       
+            case SafeChdirFailWouldBeUnableToReturn:
+#+END_SRC
+
+** find7 (6e4cecb6)
+Compile OK on arch, bug present, patch OK, bug fixed.
+
+#+BEGIN_SRC diff
+diff --git a/find/find.c b/find/find.c
+index d0c2d1f4..bcf2ba39 100644
+--- a/find/find.c
++++ b/find/find.c
+@@ -1091,7 +1091,7 @@ safely_chdir_nofollow(const char *dest,
+                      struct stat *statbuf_dest,
+                      enum ChdirSymlinkHandling symlink_handling)
+ {
+-  int extraflags = following_links() ? O_NOFOLLOW : 0;
++  int extraflags = following_links() ? 0 : O_NOFOLLOW;
+ 
+   errno = 0;
+   int fd = open(dest, O_RDONLY|extraflags);
+#+END_SRC
+
+** find8 (93623752)
+Compile OK on arch, bug present, patch OK, bug removed.
+
+These two modification fixes two bugs, but only the second one control
+the test behavior. This behavior also conforms on Ubuntu.
+
+#+BEGIN_SRC diff
+diff --git a/find/parser.c b/find/parser.c
+index 75bbe693..8f78379a 100644
+--- a/find/parser.c
++++ b/find/parser.c
+@@ -911,7 +911,8 @@ static boolean
+ parse_gid (const struct parser_table* entry, char **argv, int *arg_ptr)
+ {
+   struct predicate *p = insert_num (argv, arg_ptr, entry);
+-  p->est_success_rate = (p->args.numinfo.l_val < 100) ? 0.99 : 0.2;
++  if (p)
++    p->est_success_rate = (p->args.numinfo.l_val < 100) ? 0.99 : 0.2;
+   return p;
+ }
+ 
+@@ -3124,8 +3125,10 @@ parse_time (const struct parser_table* entry, char *argv[], int *arg_ptr)
+        */
+     }
+   
+-  if (!get_relative_timestamp(timearg, &tval, origin, DAYSECS, errmsg))
++  if (!get_relative_timestamp(timearg, &tval, origin, DAYSECS, errmsg)) {
++    (*arg_ptr)--;
+     return false;
++  }
+ 
+   our_pred = insert_primary (entry);
+   our_pred->args.reftime = tval;
+#+END_SRC
+
+** find9 (091557f6)
+
+Does not compile on arch. Does compile on Ubuntu 14.04, but the test
+script does not run.
+
+** find10 (dbcb10e9)
+Does not compile on arch. Does compile on Ubuntu. Bug present. Patch is OK, Bug removed.
+
+
+#+BEGIN_SRC diff
+diff --git a/find/parser.c b/find/parser.c
+index 23a3374..2a4148a 100644
+--- a/find/parser.c
++++ b/find/parser.c
+@@ -2759,7 +2759,7 @@ get_num (char *str,
+   ok = xstrtoumax (str, pend, 10, num, "") == LONGINT_OK;
+   if (ok && fractional_part)
+     {
+-      if (*pend)
++      if (pend && *pend)
+        {
+          if ('.'== (**pend))
+            {
+#+END_SRC
+
+** find11 (24bf33c0)
+Does not compile on arch, does compile on Ubuntu. Bug present (symptom
+is void), patch is OK, bug removed (symptom: throw error)
+
+#+BEGIN_SRC diff
+diff --git a/find/ftsfind.c b/find/ftsfind.c
+index 3e94da1..dc50fbe 100644
+--- a/find/ftsfind.c
++++ b/find/ftsfind.c
+@@ -428,7 +428,7 @@ consider_visiting(FTS *p, FTSENT *ent)
+       error_severity(1);
+       return;
+     }
+-  else if (ent->fts_info == FTS_SLNONE)
++  else if (ent->fts_info == FTS_SLNONE  || ent->fts_info == FTS_NS)
+     {
+       /* fts_read() claims that ent->fts_accpath is a broken symbolic
+        * link.  That would be fine, but if this is part of a symbolic
+#+END_SRC
+
+** find12 (24e2271e)
+
+Compile OK on arch, bug present, patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/find/ftsfind.c b/find/ftsfind.c               
+index 4b597ec9..2d348582 100644                            
+--- a/find/ftsfind.c                                       
++++ b/find/ftsfind.c                                       
+@@ -388,6 +388,7 @@ process_all_startpoints(int argc, char *argv[])                                                    
+   /* figure out how many start points there are */        
+   for (i = 0; i < argc && strchr ("-!(),", argv[i][0]) == NULL; i++)                                                  
+     {                                                     
++      state.starting_path_length = strlen(argv[i]);       
+       find(argv[i]);                                      
+     }                                                     
+
+#+END_SRC
+
+** find13 (e1d0a991)
+Compile OK, bug present.
+
+Too complex.
+
+** find14 (e6680237)
+
+Compile OK, bug present. Patch OK, but bug still present on arch. Bug
+is fixed on Ubuntu.
+#+BEGIN_SRC diff
+diff --git a/find/pred.c b/find/pred.c
+index e2e8dfb..364883f 100644
+--- a/find/pred.c
++++ b/find/pred.c
+@@ -510,7 +510,7 @@ pred_empty (const char *pathname, struct stat *stat_buf, str
+ static bool
+ record_exec_dir (struct exec_val *execp)
+ {
+-  if (!execp->wd_for_exec)
++  if (!execp->state.todo)
+     {
+       /* working directory not already known, so must be a *dir variant,
+         and this must be the first arg we added.   However, this may
+
+#+END_SRC
+
+
+* grep
+makefile treat script:
+
+#+BEGIN_SRC sh
+for name in grep*; do
+    echo -e "all: ;\nclean: ;" > $name/grep/po/Makefile
+    echo -e "all: ;\nclean: ;" > $name/grep/doc/Makefile
+done
+#+END_SRC
+
+** grep1 (54d55bba)
+Compile OK on arch, bug present. Patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/lib/savedir.c b/lib/savedir.c                 
+index 45bf9c3..d9bb850 100644                              
+--- a/lib/savedir.c                                        
++++ b/lib/savedir.c                                        
+@@ -48,7 +48,7 @@ isdir1 (const char *dir, const char *file)
+   size_t dirlen = strlen (dir);                           
+   size_t filelen = strlen (file);                         
+                                                           
+-  while (dirlen && path[dirlen - 1] == '/')               
++  while (dirlen && dir[dirlen - 1] == '/')                
+     dirlen--;                                             
+                                                           
+   if ((dirlen + filelen + 2) > pathlen)                   
+
+#+END_SRC
+
+** grep2 (55cf7b6a)
+Compile OK on arch (require empty po/Makefile to "all: ; clean: ;").
+Bug present. Patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/src/main.c b/src/main.c                       
+index 3376fa4..1ee0448 100644                              
+--- a/src/main.c                                           
++++ b/src/main.c                                           
+@@ -1244,10 +1244,12 @@ grepfile (char const *file, struct stats *stats)                                               
+     }                                                     
+                                                           
+   if ((directories == SKIP_DIRECTORIES && S_ISDIR (stats->stat.st_mode))                                              
+-      || (devices == SKIP_DEVICES && (S_ISCHR (stats->stat.st_mode)                                                   
+-                                      || S_ISBLK (stats->stat.st_mode)                                                
+-                                      || S_ISSOCK (stats->stat.st_mode)                                               
+-                                      || S_ISFIFO (stats->stat.st_mode))))                                            
++      || (devices == SKIP_DEVICES                         
++          && desc != STDIN_FILENO                         
++          && (S_ISCHR (stats->stat.st_mode)               
++              || S_ISBLK (stats->stat.st_mode)            
++              || S_ISSOCK (stats->stat.st_mode)           
++              || S_ISFIFO (stats->stat.st_mode))))        
+     {                                                     
+       if (file)                                           
+         close (desc);                                     
+#+END_SRC
+** grep3 (7aa698d3)
+Require to locale-gen tr_TR.UTF-8
+
+Compile on arch, bug present.
+
+Too complex.
+** grep4 (58195fab)
+Compile OK on arch, bug present. Patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/src/grep.c b/src/grep.c                       
+index fbeb089..b86e3de 100644                              
+--- a/src/grep.c                                           
++++ b/src/grep.c                                           
+@@ -2136,7 +2136,7 @@ main (int argc, char **argv)         
+       case INCLUDE_OPTION:                                
+        if (!included_patterns)                            
+          included_patterns = new_exclude ();              
+-       add_exclude (included_patterns, optarg, EXCLUDE_INCLUDE);                                                      
++       add_exclude (included_patterns, optarg, EXCLUDE_INCLUDE | EXCLUDE_WILDCARDS);                                  
+        break;                                             
+                                                           
+#+END_SRC
+
+
+** grep5 (c1cb19fe)
+
+require locale-gen ru_RU.KOI8-R
+
+Compile OK, bug present, Patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/src/dfa.c b/src/dfa.c                         
+index 3122e22..f695625 100644                              
+--- a/src/dfa.c                                            
++++ b/src/dfa.c                                            
+@@ -469,7 +469,7 @@ static int                             
+ in_coll_range (char ch, char from, char to)               
+ {                                                         
+   char c[6] = { from, 0, ch, 0, to, 0 };                  
+-  return strcoll (&c[0], &c[2]) <= 0 && 0 <= strcoll (&c[2], &c[4]);                                                  
++  return strcoll (&c[0], &c[2]) <= 0 && 0 >= strcoll (&c[2], &c[4]);                                                  
+ }                                                         
+                                                           
+ #ifdef MBS_SUPPORT                                        
+#+END_SRC
+
+** grep6 (9c45c193)
+Compile OK. Bug present. Patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/src/grep.c b/src/grep.c                       
+index fbeb089..8460e8a 100644                              
+--- a/src/grep.c                                           
++++ b/src/grep.c                                           
+@@ -2265,7 +2265,7 @@ There is NO WARRANTY, to the extent permitted by law.\n"),                                       
+              && !isdir (file))                            
+            {                                              
+              if (included_patterns &&                     
+-                 ! excluded_file_name (included_patterns, file))                                                      
++                 excluded_file_name (included_patterns, file))                                                        
+                continue;                                  
+              if (excluded_patterns &&                     
+                  excluded_file_name (excluded_patterns, file))                                                        
+#+END_SRC
+** grep7 (8f08d8e2)
+Require zh_CN
+
+Compile OK. Bug present. Patch OK, bug removed.
+
+#+BEGIN_SRC diff
+diff --git a/src/search.c b/src/search.c                   
+index 206260d..c660321 100644                              
+--- a/src/search.c                                         
++++ b/src/search.c                                         
+@@ -445,7 +445,7 @@ EXECUTE_FCT(EGexecute)                 
+                  /* Good enough for a non-exact match.    
+                     No need to look at further patterns, if any.  */                                                  
+                  beg = match;                             
+-                 goto success_in_len;                     
++                 goto success;                            
+                }                                          
+              if (match < best_match || (match == best_match && len > best_len))                                       
+                {                                          
+#+END_SRC
+** grep8 (5fa8c7c9)
+Compile OK. Everything's good.
+
+#+BEGIN_SRC diff
+diff --git a/src/searchutils.c b/src/searchutils.c         
+index 8c34e31..ef6b2ce 100644                              
+--- a/src/searchutils.c                                    
++++ b/src/searchutils.c                                    
+@@ -121,6 +121,8 @@ is_mb_middle (const char **good, const char *buf, const char *end,                                 
+   const char *prev = p;                                   
+   mbstate_t cur_state;                                    
+                                                           
++  if (match_len <= 0) return false;                       
++                                                          
+   /* TODO: can be optimized for UTF-8.  */                
+   memset(&cur_state, 0, sizeof(mbstate_t));               
+   while (p < buf)                                         
+#+END_SRC
+** grep9 (c96b0f2c)
+Compile OK. Everything's good.
+
+#+BEGIN_SRC diff
+diff --git a/src/search.c b/src/search.c                   
+index d9b4462..38b929f 100644                              
+--- a/src/search.c                                         
++++ b/src/search.c                                         
+@@ -385,7 +385,7 @@ EXECUTE_FCT(EGexecute)                 
+              /* No good fixed strings; start with DFA. */ 
+              char const *next_beg = dfaexec (&dfa, beg, (char *) buflim,                                              
+                                              0, NULL, &backref);                                                      
+-             if (next_beg == NULL)                        
++             if (next_beg == NULL || next_beg == buflim)  
+                break;                                     
+              /* Narrow down to the line we've found. */   
+              beg = next_beg;                              
+#+END_SRC
+
+
+** grep10 (6d952bee) NOT FOUND
+Compile OK.
+** TODO grep11 (db9d6340) [Infinite] [search.c]
+Compile OK. Everything's OK.
+#+BEGIN_SRC diff
+diff --git a/src/search.c b/src/search.c                   
+index c986d48..6905f57 100644                              
+--- a/src/search.c                                         
++++ b/src/search.c                                         
+@@ -635,8 +635,11 @@ EXECUTE_FCT(Fexecute)                 
+       if (offset == (size_t) -1)                          
+        goto failure;                                      
+ #ifdef MBS_SUPPORT                                        
++      char const *s_in = mb_start;                        
+       if (MB_CUR_MAX > 1 && is_mb_middle (&mb_start, beg + offset, buf + size))                                       
+         {                                                 
++          if (mb_start == s_in)                           
++            goto failure;                                 
+           beg = mb_start - 1;                             
+           continue; /* It is a part of multibyte character.  */                                                       
+         }                                                 
+#+END_SRC
+
+Insights:
+1. The function Fexecute (fixed-string search) is a pointer in
+   matchers table, thus the caller cannot be followed. Thus the
+   arguments are treated as input.
+2. The char buffer must contain multibyte characters (e.g. Chinese) so
+   that is_mb_middle will not change the md_start pointer.
+3. for infinite loop, the start point is going to be the whole loop,
+   and tries to reach a input point. After that, the loop can be
+   simplified by remove statements and observe whether the same input
+   still trigger infinite behavior. The possible search strategy for
+   removing might be:
+   1. try to remove statements not assigning the loop break condition
+      (not on the data dependency)
+4. Alternatively, we can try to have the failure condition ~md_start
+   != s_in~ at the beginning to start with, and do demand driven
+   search from there. Then the bug signature will be different (will
+   not even include the loop).
+
+TODOs remaining:
+- which model to use for inifinite loop?
+  - start with whole loop as failure point
+  - start with an identified position
+- Transfer function between iteration
+- model of dynamic feature
+
+Dynamic Feature:
+- Failure condition: ~beg_i = CONASTANT~ where ~i>=c~
+- Transfer function:
+  - ~beg = mb_start - 1~
+  - ~mb_start = mb_start_LAST~
+- Precondition:
+  - null
+- Input Requirement:
+  - multibyte characters in buffer
+
+Bug Signature:
+#+BEGIN_SRC C
+  static size_t Fexecute (char const *buf, size_t size, size_t *match_size, char const *start_ptr) {
+    char const *beg, *try, *end, *mb_start;
+    struct kwsmatch kwsmatch;
+
+    for (mb_start = beg = start_ptr ? start_ptr : buf; beg <= buf + size; beg++)
+      {
+        size_t offset = kwsexec (kwset, beg, buf + size - beg, &kwsmatch);
+        if (offset == (size_t) -1)
+          goto failure;
+        char const *s_in = mb_start;
+        if (MB_CUR_MAX > 1 && is_mb_middle (&mb_start, beg + offset, buf + size))
+          {
+            HELIUM_assert(mb_start != s_in);
+            beg = mb_start - 1;
+            continue; /* It is a part of multibyte character.  */
+          }
+        beg += offset;
+      }
+
+   failure: ;
+    return 0;
+  }
+#+END_SRC
+
+** grep12 (2be0c659)
+Compile OK. Bug present.
+
+Too complex.
+** grep13 (3220317a)
+Compile OK. Everything's OK.
+
+#+BEGIN_SRC diff
+diff --git a/src/dfa.c b/src/dfa.c                         
+index 3b0d861..96f9a2a 100644                              
+--- a/src/dfa.c                                            
++++ b/src/dfa.c                                            
+@@ -694,7 +694,7 @@ parse_bracket_exp (void)               
+          continue;                                        
+        }                                                  
+                                                           
+-      setbit_case_fold (c, ccl);                          
++      setbit_case_fold (wc, ccl);                         
+ #ifdef MBS_SUPPORT                                        
+       /* Build normal characters.  */                     
+       if (MB_CUR_MAX > 1)                                 
+#+END_SRC
+** grep14 (3c3bdace)
+Compile OK. Everything's OK.
+#+BEGIN_SRC diff
+diff --git a/src/dfa.c b/src/dfa.c                         
+index d1d7f25..7c0cf05 100644                              
+--- a/src/dfa.c                                            
++++ b/src/dfa.c                                            
+@@ -1725,7 +1725,7 @@ dfaanalyze (struct dfa *d, int searchflag)                                                       
+   MALLOC(nalloc, int, d->tindex);                         
+   for (i = 0; i < d->tindex; ++i)                         
+     nalloc[i] = 0;                                        
+-  MALLOC(merged.elems, position, d->nleaves);             
++  MALLOC(merged.elems, position, 2 * d->nleaves);         
+                                                           
+   CALLOC(d->follows, position_set, d->tindex);            
+                                                           
+#+END_SRC

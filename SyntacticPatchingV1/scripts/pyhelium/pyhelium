@@ -1,0 +1,368 @@
+#!/usr/bin/env python3
+
+"""
+pyhelium is the python scripting system of Helium.
+
+This is the main entry point of pyhelium.
+"""
+
+from threading import Thread
+import argparse
+import os
+import subprocess
+import pprint
+import json
+import time
+
+from iclones_process import create_iclones_selection
+# from preprocess import unzip, preprocess, create_selection
+import shutil
+
+def run_process(cmd):
+    completed = subprocess.run(cmd, shell=True, stderr=subprocess.DEVNULL)
+    if completed.returncode is not 0:
+        return 1
+    return 0
+    
+def run_process_with_timeout(cmd, timeout):
+    try:
+        completed = subprocess.run(cmd, shell=True, stderr=subprocess.DEVNULL, timeout=timeout)
+        if completed.returncode is not 0:
+            return 1
+    except subprocess.TimeoutExpired:
+        # print('timeout')
+        return 1
+    return 0
+
+# def run_process(cmd):
+#     completed = subprocess.run(cmd, shell=True, stderr=subprocess.DEVNULL, timeout=timeout)
+#     if completed.returncode is not 0:
+#         return 1
+#     return 0
+
+
+
+def create_selection(indir, outdir):
+    """
+    Create random selection for all cache folder
+    """
+    profile = load_profile()
+    good_benches = get_good_benches(profile)
+    total = len(good_benches)
+    idx = 0
+    for item in os.listdir(indir):
+        if item not in good_benches: continue
+        idx+=1
+        print ('[',idx, '/', total,']', end=' -- ')
+        # print ('creating selection for ' + os.path.join(indir, item) + ' ..')
+        benchmark=os.path.join(indir, item)
+        outputdir=os.path.join(outdir, item)
+        if os.path.isdir(benchmark):
+            cmd = 'helium --create-selection --sel-num 10 --sel-tok 10 '\
+                  + benchmark + ' -o ' + outputdir
+            print ("==>", cmd)
+            if run_process_with_timeout(cmd, 1.0) == 0:
+                profile[item]['sel-suc'] = True
+            else:
+                profile[item]['sel-suc'] = False
+    dump_profile(profile)
+                
+def preprocess_one(indir, outdir):
+    includejson = os.path.join(outdir, 'include.json')
+    snippetjson = os.path.join(outdir, 'snippets.json')
+    profile = {}
+    t1 = time.time()
+    timeout = 1.0
+
+    cmd = 'helium --preprocess ' + indir + ' -o ' + outdir
+    print ("==>", cmd)
+    if run_process_with_timeout(cmd, timeout):
+        profile['prep-suc'] = False
+        return profile
+
+    cmd = 'helium --create-include-dep ' + indir + ' -o ' + includejson
+    print ("==>", cmd)
+    if run_process_with_timeout(cmd, timeout):
+        profile['prep-suc'] = False
+        return profile
+
+    cmd = 'helium --create-snippet ' + outdir + ' --include-dep ' + includejson + ' -o ' + snippetjson
+    print ("==>", cmd)
+    if run_process_with_timeout(cmd, timeout):
+        profile['prep-suc'] = False
+        return profile
+
+    t2 = time.time()
+    profile['prep-suc'] = True
+    profile['prep-time'] = round(t2-t1, ndigits=2)
+    return profile
+
+def preprocess(indir, outdir):
+    """
+    2. create include.json
+    3. create snippets.json
+    """
+    if os.path.exists(outdir): shutil.rmtree(outdir)
+    os.mkdir(outdir)
+    profile = load_profile()
+    good_benches = get_good_benches(profile)
+    total = len(good_benches)
+    idx = 0
+    for name in os.listdir(indir):
+        if name not in good_benches: continue
+        idx += 1
+        print ('[',idx, '/', total,']', end=' -- ')
+        bench = os.path.join(indir, name)
+        prepdir = os.path.join(outdir, name)
+        os.mkdir(prepdir)
+        p = preprocess_one(bench, prepdir)
+        profile[name].update(p)
+    dump_profile(profile)
+
+
+def run_one(bench, sel, outdir):
+    profile = {}
+    includejson = os.path.join(bench, "include.json")
+    snippetjson = os.path.join(bench, "snippets.json")
+    if not os.path.exists(sel):
+        print (sel + ' not exists, skipped')
+        return
+    cmd = 'helium --run ' + bench + ' --selection ' + sel +\
+          ' --snippet ' + snippetjson +\
+          ' --include-dep ' + includejson +\
+          ' -o ' + outdir
+    print("==>", cmd)
+    t1 = time.time()
+    # if run_process_with_timeout(cmd, 10) == 0:
+    if run_process(cmd) == 0:
+        profile['run-suc'] = True
+    else:
+        profile['run-suc'] = False
+    t2 = time.time()
+    profile['run-time'] = round(t2-t1, ndigits=2);
+    return profile;
+
+def run_helium(indir, seldir, outdir):
+    """
+    indir: prep folder
+    seldir: seldir folder
+    outdir: gen folder
+    """
+    profile = load_profile()
+    if os.path.exists(outdir): shutil.rmtree(outdir)
+    os.mkdir(outdir)
+    good_benches = get_good_benches(profile)
+    total = len(good_benches)
+    idx = 1
+    for benchname in os.listdir(indir):
+        if benchname in good_benches:
+            print ('[',idx, '/', total,']', end=' -- ')
+            idx += 1
+            bench = os.path.join(indir, benchname)
+            # sel = os.path.join(seldir, 'by-bench', item)
+            sel = os.path.join(seldir, benchname)
+            out = os.path.join(outdir, benchname)
+            p = run_one(bench, sel, out)
+            if p:
+                profile[benchname].update(p)
+                pass
+            pass
+        pass
+    dump_profile(profile)
+
+def create_profile(indir):
+    profile_file = 'profile.json'
+    profile = {}
+    for benchname in os.listdir(indir):
+        profile[benchname] = {}
+    with open(profile_file, 'w') as f:
+        json.dump(profile, f, indent=2)
+        
+def load_profile():
+    profile_file = 'profile.json'
+    if not os.path.exists(profile_file):
+        print ('profile.json does not exist. Run create_profile first')
+        exit(1)
+    with open(profile_file) as f:
+        return json.load(f)
+
+def dump_profile(profile):
+    profile_file = 'profile.json'
+    with open(profile_file, 'w') as f:
+        json.dump(profile, f, indent=2)
+
+def get_good_benches(profile):
+    ret = set()
+    for name in profile:
+        obj = profile[name]
+        if 'prep-suc' in obj and obj['prep-suc'] == False: continue
+        if 'sel-suc' in obj and obj['sel-suc'] == False: continue
+        if 'run-suc' in obj and obj['run-suc'] == False: continue
+        if 'ana-suc' in obj and obj['ana-suc'] == False: continue
+        if 'br' in obj and obj['br'] < 50: continue
+        ret.add(name)
+    print ('Number of good benches: ', len(ret), 'out of', len(profile))
+    # for name in ret:
+    #     print(name, profile[name]['br'], end=',')
+    # print('')
+    return ret
+
+
+
+# iclones experiment
+
+
+
+#
+# Running profile
+# this should be sorted
+# [["name", 1.332], ["bench2", 32.380]]
+# [{'name': bench, time: 1.32, bt: 87, prep: true}]
+# {'bench111': {'time': 1.32, bt: 87, prep: true}
+# }
+        
+def analyze_buildrate(indir):
+    """
+    analyze buildrate and output sorted
+    """
+    # storage = []
+    profile = load_profile()
+    for bench in os.listdir(indir):
+        assert(bench in profile)
+        # print ('benchmark: ' + bench)
+        benchdir = os.path.join(indir, bench)
+        sels = os.listdir(benchdir)
+        if len(sels) == 0:
+            profile[bench]['ana-suc'] = False
+            continue
+        profile[bench]['ana-suc'] = True
+        suc = []
+        for sel in sels:
+            if os.path.exists(os.path.join(benchdir, sel, 'a.out')):
+                suc.append(sel)
+        # s = 'build rate: {suc_ct}/{total_ct}={br}%'.format(suc_ct=len(suc), total_ct=len(sels), br=len(suc)/len(sels)*100)
+        # storage.append((bench, len(suc)/len(sels)*100))
+        profile[bench]['br-suc'] = len(suc)
+        profile[bench]['br-fail'] = len(sels)
+        profile[bench]['br'] = len(suc)/len(sels)*100
+    dump_profile(profile)
+
+
+
+import re
+def get_token_size(lispfile):
+    # selected tokens are marked with lambda
+    # if after the lambda, the first paren is close paren, it is a leaf, a.k.a. a token
+    # count them
+    with open(lispfile) as f:
+        # use regular expression to match this
+        content = f.read()
+        pattern = re.compile('lambda[^(]*\)')
+        # FIXME I might want to remove the effect of 0:0 nodes caused by clang opaque expr
+        # pattern = re.compile('lambda')
+        return len(pattern.findall(content))
+
+def analyze_token_size(indir):
+    profile = load_profile()
+    good_benches = get_good_benches(profile)
+    num = 0
+    noneed = 0
+    total_orig_ct = 0
+    total_patch_ct = 0
+    for bench in os.listdir(indir):
+        if bench not in good_benches: continue
+        benchdir = os.path.join(indir, bench)
+        for sel in os.listdir(benchdir):
+            seldir = os.path.join(benchdir, sel)
+            astdir = os.path.join(seldir, 'ast')
+            # inside this dir, there will be a AST file for each of the .c files
+            # foo.lisp, foo.orig.lisp, foo.patch.lisp
+            # so scan all of them, and get the leaf node selected in .orig.lisp (orig) and .patch.lisp (patch)
+            # report avg(orig) and avg(patch)
+            
+            # FIXME only count the successfully built ones
+            aout = os.path.join(seldir, 'a.out')
+            if not os.path.exists(aout): continue
+            
+            orig_ct = 0
+            patch_ct = 0
+            for f in os.listdir(astdir):
+                f = os.path.join(astdir, f)
+                if f.endswith('.orig.lisp'):
+                    orig_ct += get_token_size(f)
+                elif f.endswith('.patch.lisp'):
+                    patch_ct += get_token_size(f)
+            if orig_ct != 0:
+                if orig_ct == patch_ct: noneed+=1
+                total_orig_ct += orig_ct
+                total_patch_ct += patch_ct
+                num+=1
+    print('total orig: ', total_orig_ct)
+    print('total patch: ', total_patch_ct)
+    print('noneed: ', noneed)
+    print('num: ', num)
+    if num != 0:
+        print('avg(orig): ', total_orig_ct / num)
+        print('avg(patch): ', total_patch_ct / num)
+            
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='pyhelium -- Helium Python Scripting System')
+
+    # parser.add_argument('--unzip', action='store_true')
+    parser.add_argument('--create-profile', action='store_true')
+    parser.add_argument('--create-selection', action='store_true')
+    parser.add_argument('--create-iclones-selection', action='store_true')
+    parser.add_argument('--preprocess', action='store_true')
+
+    parser.add_argument('--run-helium', action='store_true',
+                        help='give as input the preprocessed folder')
+    parser.add_argument('-s', '--selection', help='selection files')
+
+    parser.add_argument('--analyze-buildrate', action='store_true')
+    parser.add_argument('--analyze-token-size', action='store_true')
+    parser.add_argument('--hebi', action='store_true')
+
+    # general arguments
+    parser.add_argument('input', help='positional /path/to/benchmark')
+    parser.add_argument('-o', '--output', help='/path/to/output')
+    
+    parser.add_argument('--consume-iclones-result', action='store_true')
+    # helium produce: folder
+    # ID is the name of the folder
+    # helium_output.txt file: {#InputVar, #OutputVar, #data}
+    # pairs.json:
+    # [{"type": 3, "IDs": [1,2,3]}]
+    parser.add_argument('--pairs-json', help='/path/to/iclones/pairs.json')
+    args = parser.parse_args()
+
+    # if args.unzip:
+    #     unzip(args.input, args.output)
+    if args.create_profile:
+        create_profile(args.input)
+    elif args.preprocess:
+        assert(args.output)
+        preprocess(args.input, args.output)
+    elif args.create_selection:
+        assert(args.output)
+        create_selection(args.input, args.output)
+    elif args.create_iclones_selection:
+        assert(args.output)
+        create_iclones_selection(args.input, args.output)
+    elif args.run_helium:
+        assert(args.output)
+        assert(args.selection)
+        run_helium(args.input, args.selection, args.output)
+    elif args.analyze_buildrate:
+        analyze_buildrate(args.input)
+    elif args.analyze_token_size:
+        analyze_token_size(args.input)
+    elif args.hebi:
+        profile = load_profile()
+        good_benches = get_good_benches(profile)
+        for bench in good_benches:
+            print(bench)
+            print(profile[bench]['br-suc'])
+            print(profile[bench]['br-fail'])
+            print(profile[bench]['br'])

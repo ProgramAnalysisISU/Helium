@@ -1,0 +1,266 @@
+#+TITLE: Demand-Driven Dynamic Analysis Experiment Document
+#+LATEX_CLASS: acmart
+#+OPTIONS: toc:nil
+
+This document is on-going document of the design of demand-driven analysis.
+
+* Current Algorithm Outline
+
+In this section, the current overall algorithm and key points are
+listed. The purpose is to make sure we are on the same page for the
+algorithm and implementation.
+
+** Input and Output:
+- input: a benchmark, the failure position, the failure condition
+- output: compute the bug signature.
+
+
+** Steps:
+
+- Initialize the worklist with failure point
+
+Selector & Query Propagation
+- starting from failure point, trace back along all control flow path,
+  push a query into worklist for each path
+  - The CFG is inter-procedure
+    - When the query reaches a callsite, it *does /not/ go into the
+      callee*
+    - when the query reaches the beginning of a function, it *follows
+      ICFG to all callsites*
+  - The propagation *does /not/ follow loop backedge*.
+
+Builder & Dynamic Inference:
+- For each newly created program, instrument IO, build executable and
+  run random tests.
+- Infer transfer function.
+  - If the current query is a *merge* point (has two or more outgoing
+    edge on CFG):
+    - check if the query can be merged by comparing transfer function
+    - leave message and a pointer here for future query merge.
+  - *No nodes will be removed* during the search, even if it does not
+    change the transfer function.
+  - *Record potential useless statements*
+
+Oracle:
+- Failure Condition (FC) + Transfer Function (TF)
+  - negate FC + TF => not SAT by Z3 => resolved
+  - FC + TF => not SAT by Z3 => resolved
+  - *using TF, map FC to pre-condition* that only consists of
+    pre-defined entry point => resolved
+  - otherwise: continue propagation
+
+
+
+* Benchmarks Status
+
+The targeted bug types are
+- null pointer dereference
+- use after free
+- double free
+- infinite loop / recursion
+- buffer overflow
+- off-by-one
+- divide by zero
+
+The overall evaluation plans are as follows. 
+1. [Current] We first use existing well-understood benchmarks, and
+   show we can generate bug signature, for different type of bugs
+2. Collect other bugs from bug reports, and generate bug signature as
+   new benchmarks
+3. Use auto-repair tools to fix bug signatures, and transplant the
+   patch to original project
+
+In the mean time, we also planned the assertion experiment:
+4. Verify assertions
+
+** Benchmark In Progress
+
+We have used three bugs from Bugbench and show it working. Currently
+the focus is DbgBench cite:2017-FSE-Böhme-Bug. Corebench
+cite:2014-ISSTA-Böhme-Corebench and DbgBench are the same set of
+benchmarks, but DbgBench has more bug analysis and fixes.  The oracle
+implementation is pretty preliminary, and contains specific templates
+to make DbgBench works.
+
+
+#+CAPTION: Bugbench cite:2005-Workshop-Lu-Bugbench Details
+#+ATTR_LATEX: :font \footnotesize
+| benchmark name        | type                  | comment                   | Working |
+|-----------------------+-----------------------+---------------------------+---------|
+| /                     | <                     | <                         | <       |
+|-----------------------+-----------------------+---------------------------+---------|
+| gzip-1.2.4            | buffer overflow       | no bounds checking        | X       |
+| ncompress-4.2.4       | stack buffer overflow | no bounds checking        | X       |
+| polymorph-0.4.0 bug 1 | global array overflow | no bounds checking        | X       |
+|-----------------------+-----------------------+---------------------------+---------|
+| bc-1.06 bug 3         |                       | no bounds checking        |         |
+|-----------------------+-----------------------+---------------------------+---------|
+| polymorph-0.4.0 bug 2 | stack buffer overflow | no bounds checking        |         |
+| bc-1.06 bug 1         | buffer overflow       | incorrect bounds checking |         |
+| man-1.5h1             | buffer overflow       | incorrect bounds checking |         |
+| bc-1.06 bug 2         |                       | semantic                  |         |
+|-----------------------+-----------------------+---------------------------+---------|
+| squid-2.3             |                       |                           |         |
+| squid-2.3             |                       |                           |         |
+| cvs-1.11.4            | double free,          |                           |         |
+|-----------------------+-----------------------+---------------------------+---------|
+| httpd-2.0.48          |                       | Concurrent                |         |
+| msql-4.1.1            |                       |                           |         |
+| mysql-3.23.56         |                       |                           |         |
+| mysql-4.1.1           |                       |                           |         |
+
+#+CAPTION: DbgBench cite:2017-FSE-Böhme-Bug Details
+#+ATTR_LATEX: :font \footnotesize
+| bug               | type             | working |
+|-------------------+------------------+---------|
+| /                 | <                | <       |
+|-------------------+------------------+---------|
+| find (66c536bb)   | functional bug   | X       |
+| find (07b941b1)   | buffer overflow  | X       |
+| find (183115d0)   | resource leak    | X       |
+| find (c8491c11)   | null dereference | X       |
+| grep (db9d6340)   | infinite loop    | partly  |
+|-------------------+------------------+---------|
+| find (183115d0)   | Resource Leak    |         |
+| find (c8491c11)   | Null Dereference |         |
+| find (b445af98)   |                  |         |
+| find (ff248a20)   |                  |         |
+| find (6e4cecb6)   |                  |         |
+| find (93623752)   |                  |         |
+| find (091557f6)   |                  |         |
+| find (dbcb10e9)   |                  |         |
+| find (24bf33c0)   |                  |         |
+| find (24e2271e)   |                  |         |
+| find (e1d0a991)   |                  |         |
+| find (e6680237)   |                  |         |
+|-------------------+------------------+---------|
+| grep (54d55bba)   |                  |         |
+| grep (55cf7b6a)   |                  |         |
+| grep (7aa698d3)   |                  |         |
+| grep (58195fab)   |                  |         |
+| grep (c1cb19fe)   |                  |         |
+| grep (9c45c193)   |                  |         |
+| grep (8f08d8e2)   |                  |         |
+| grep (5fa8c7c9)   |                  |         |
+| grep (c96b0f2c)   |                  |         |
+| grep (2be0c659)   |                  |         |
+| grep (3220317a)   |                  |         |
+| grep (3c3bdace)   |                  |         |
+
+
+** Other Benchmark Suites
+
+Bufbench and Verisec Suite [fn:veri-link] are all buffer
+overflows. They have some common bugs. Previously the build rate is
+not good on them, and the benchmarks are artificial.
+
+But they are good because all bugs are real and have an CVE ID for
+reference. The documentation for those bugs are relatively complete,
+and the bugs are well understood.
+
+# However, the benchmark suite is artificial. Thus some manual work:
+- get original code 
+- identify vulnerability location
+- test case to produce the vulnerability
+- further classify the buffer overflow
+  - string copy from user input (no bounds checking)?
+  - incorrect bounds checking?
+  - off-by-one?
+  - loop over the buffer?
+  - trivial?
+
+#+CAPTION: Verisec Details. All buffer overflow.
+#+ATTR_LATEX: :font \footnotesize
+| bug          | type                | comment                 | CVE           |
+|--------------+---------------------+-------------------------+---------------|
+| /            | <                   | <                       | <             |
+|--------------+---------------------+-------------------------+---------------|
+| apache       | buffer overflow     |                         | CVE-2004-0940 |
+|              | off-by-one          |                         | CVE-2006-3747 |
+|--------------+---------------------+-------------------------+---------------|
+| bind         | buffer overflow     |                         | CA-1999-14    |
+|              | buffer overflow     |                         | CVE-2001-0011 |
+|--------------+---------------------+-------------------------+---------------|
+| sendmail     | buffer overflow     |                         | CVE-1999-0047 |
+|              | buffer overflow     | caused by infinite loop | CVE-1999-0206 |
+|              | arithmetic overflow |                         | CVE-2001-0653 |
+|              | buffer overflow     |                         | CVE-2002-0906 |
+|              | buffer overflow     |                         | CVE-2002-1337 |
+|              | buffer overflow     |                         | CVE-2003-0161 |
+|              | buffer overflow     |                         | CVE-2003-0681 |
+|--------------+---------------------+-------------------------+---------------|
+| wu-ftpd      | 3 buffer overflows  |                         | CVE-1999-0368 |
+|              | buffer overflow     | trivial                 | CVE-1999-0878 |
+|              | buffer overflow     | wrong bounds            | CVE-2003-0466 |
+|--------------+---------------------+-------------------------+---------------|
+| edbrowse     | buffer overflow     |                         | CVE-2006-6909 |
+| gxine        | buffer overflow     |                         | CVE-2007-0406 |
+| libgd        | out-of-bounds read  |                         | CVE-2007-0455 |
+| MADWiFi      | buffer overflow     |                         | CVE-2006-6332 |
+| NetBSD-libc  | buffer overflow     |                         | CVE-2006-6652 |
+| OpenSER      | buffer overflow     |                         | CVE-2006-6749 |
+|              | buffer overflow     |                         | CVE-2006-6876 |
+| samba        | buffer overflow     |                         | CVE-2007-0453 |
+|--------------+---------------------+-------------------------+---------------|
+| SpamAssassin | off-by-one          |                         | BID-6679      |
+
+[fn:veri-link] http://se.cs.toronto.edu/index.php/Verisec_Suite
+
+
+#+CAPTION: Bufbench cite:2004-FSE-Zitser-Testing Details, All buffer overflow.
+#+ATTR_LATEX: :font \footnotesize
+| name                        | CVE           | comment                   |
+|-----------------------------+---------------+---------------------------|
+| /                           | <             | <                         |
+|-----------------------------+---------------+---------------------------|
+| bind [fn:bind-link]         | CA-1999-14    | no bounds checking        |
+|                             | CA-1999-14    | arithmetic overflow       |
+|                             | CVE-1999-0009 | no bounds checking        |
+|                             | CVE-2001-0013 | no bounds checking        |
+|-----------------------------+---------------+---------------------------|
+| sendmail [fn:sendmail-link] | CA-2003-07    | caused by infinite loop   |
+|                             | CVE-1999-0131 | no bounds checking        |
+|                             | CVE-1999-0206 | pointer not reset         |
+|                             | CVE-1999-0047 | incorrect bounds checking |
+|                             | CA-2003-12    |                           |
+|                             | CVE-2001-0653 | arithmetic overflow       |
+|                             | CVE-2002-0906 | no bounds checking        |
+|-----------------------------+---------------+---------------------------|
+| wuftp                       | CVE-1999-0878 | no bounds checking        |
+|                             | CAN-2003-0466 | incorrect bounds checking |
+|                             | CVE-1999-0368 | no bounds checking        |
+
+[fn:bind-link] ftp://ftp.isc.org/isc/
+[fn:sendmail-link] ftp://ftp.sendmail.org/pub/sendmail/past-releases/
+
+** Other bugs
+
+#+CAPTION: Some Individual buffer overflow Benchmarks
+#+ATTR_LATEX: :font \footnotesize
+| name     | type            | comment                                |
+|----------+-----------------+----------------------------------------|
+| /        | <               | <                                      |
+|----------+-----------------+----------------------------------------|
+| gzip     | buffer overflow | gzip 1.2.4 -> 1.3.3, 1.3.3 fix the bug |
+| putty    | buffer overflow | 0.56 -> 0.57                           |
+| tightvnc |                 | 1.2.0, 1.2.2, bug, fix, 1.3.9          |
+| libpng   |                 |                                        |
+
+Patch Analysis by Zichao Qi from MIT cite:2015-ISSTA-Qi-Analysis
+contains bugs used for auto-repair tools. The bugs are not very good
+because they compute wrong values instead of giving symptoms. But
+since we are using given failure condition now, we might revisit this.
+
+SIR benchmark are seeded bugs.
+
+
+** Benchmark Collection
+
+We also did bug collection in the wild, specifically from CVE database
+as well as bug tracking system for grep, gzip, findutils, coreutils.
+Those benchmarks are not well-understood, and should be next step.
+
+Specifically, we looked for bugs by keywords. 
+
+bibliographystyle:plain
+bibliography:../../research/bib/auto/2015-ISSTA.bib,../../research/bib/auto/2004-FSE.bib,../../research/bib/manual/Manual.bib,../../research/bib/auto/2014-ISSTA.bib,../../research/bib/auto/2017-FSE.bib

@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# can only accept: a file name
+# - a file
+# - stdin string
+
+# check if srcml executable exists
+if ! type "srcml" > /dev/null 2>&1; then
+    cmd="docker exec -i srcml_container srcml"
+    # echo "not found"
+else
+    # echo "found"
+    cmd="srcml"
+    cat $1 | srcml -lC
+fi
+
+
+args="-lC"
+file=""
+stdin=false
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        --simple) args+=" -f empty --no-namespace-decl --no-xml-declaration";;
+        --position) args+=" --position";;
+        -) stdin=true;;
+        -*) ;;
+        *) file=$1;;
+    esac
+    shift
+done
+
+# echo $cmd
+# echo $stdin
+# echo file: $file
+
+if [[ -f $file ]]; then
+    cat $file | $cmd $args
+elif [ $stdin == true ]; then
+    $cmd $args
+else
+    echo "usage:"
+    echo "helium-srcml [option] <file>"
+    echo "  file can be - or a file"
+    echo "  option: --simple --position"
+fi

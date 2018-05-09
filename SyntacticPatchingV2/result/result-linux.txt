@@ -1,0 +1,574 @@
+0
+file: /home/hebi/benchmark/linux/kernel/acct.c
+num func: 18
+.....1
+file: /home/hebi/benchmark/linux/kernel/async.c
+num func: 11
+...2
+file: /home/hebi/benchmark/linux/kernel/audit.c
+num func: 72
+xxxxxxxxxxxx3
+file: /home/hebi/benchmark/linux/kernel/audit_fsnotify.c
+num func: 12
+..4
+file: /home/hebi/benchmark/linux/kernel/audit_tree.c
+num func: 39
+...5
+file: /home/hebi/benchmark/linux/kernel/audit_watch.c
+num func: 25
+.....6
+file: /home/hebi/benchmark/linux/kernel/auditfilter.c
+num func: 34
+xxxxxx7
+file: /home/hebi/benchmark/linux/kernel/auditsc.c
+num func: 66
+xxxxxxxxxxxxxxxx8
+file: /home/hebi/benchmark/linux/kernel/bounds.c
+num func: 1
+9
+file: /home/hebi/benchmark/linux/kernel/bpf/core.c
+num func: 47
+x....10
+file: /home/hebi/benchmark/linux/kernel/capability.c
+num func: 23
+xxx11
+file: /home/hebi/benchmark/linux/kernel/cgroup/cgroup-v1.c
+num func: 39
+....12
+file: /home/hebi/benchmark/linux/kernel/cgroup/cgroup.c
+num func: 179
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx13
+file: /home/hebi/benchmark/linux/kernel/cgroup/cpuset.c
+num func: 87
+xx..................14
+file: /home/hebi/benchmark/linux/kernel/cgroup/freezer.c
+num func: 20
+...15
+file: /home/hebi/benchmark/linux/kernel/cgroup/namespace.c
+num func: 11
+..16
+file: /home/hebi/benchmark/linux/kernel/cgroup/stat.c
+num func: 15
+x..x17
+file: /home/hebi/benchmark/linux/kernel/compat.c
+num func: 42
+....18
+file: /home/hebi/benchmark/linux/kernel/cpu.c
+num func: 79
+............x19
+file: /home/hebi/benchmark/linux/kernel/crash_core.c
+num func: 17
+......20
+file: /home/hebi/benchmark/linux/kernel/crash_dump.c
+num func: 1
+21
+file: /home/hebi/benchmark/linux/kernel/cred.c
+num func: 21
+x22
+file: /home/hebi/benchmark/linux/kernel/delayacct.c
+num func: 10
+xx..23
+file: /home/hebi/benchmark/linux/kernel/dma.c
+num func: 5
+.24
+file: /home/hebi/benchmark/linux/kernel/elfcore.c
+num func: 4
+25
+file: /home/hebi/benchmark/linux/kernel/events/callchain.c
+num func: 13
+..26
+file: /home/hebi/benchmark/linux/kernel/events/core.c
+num func: 380
+x.....x...............x..x.................................x..................27
+file: /home/hebi/benchmark/linux/kernel/events/hw_breakpoint.c
+num func: 31
+......28
+file: /home/hebi/benchmark/linux/kernel/events/ring_buffer.c
+num func: 29
+.......29
+file: /home/hebi/benchmark/linux/kernel/events/uprobes.c
+num func: 85
+x.xx..x.x.......30
+file: /home/hebi/benchmark/linux/kernel/exec_domain.c
+num func: 6
+x31
+file: /home/hebi/benchmark/linux/kernel/exit.c
+num func: 58
+xxxx....32
+file: /home/hebi/benchmark/linux/kernel/extable.c
+num func: 8
+..33
+file: /home/hebi/benchmark/linux/kernel/fork.c
+num func: 82
+xxx.x......34
+file: /home/hebi/benchmark/linux/kernel/freezer.c
+num func: 6
+35
+file: /home/hebi/benchmark/linux/kernel/futex.c
+num func: 69
+x.........36
+file: /home/hebi/benchmark/linux/kernel/futex_compat.c
+num func: 12
+37
+file: /home/hebi/benchmark/linux/kernel/groups.c
+num func: 18
+x.38
+file: /home/hebi/benchmark/linux/kernel/irq/affinity.c
+num func: 7
+39
+file: /home/hebi/benchmark/linux/kernel/irq/autoprobe.c
+num func: 3
+.40
+file: /home/hebi/benchmark/linux/kernel/irq/chip.c
+num func: 61
+......x.......41
+file: /home/hebi/benchmark/linux/kernel/irq/cpuhotplug.c
+num func: 5
+x42
+file: /home/hebi/benchmark/linux/kernel/irq/devres.c
+num func: 7
+43
+file: /home/hebi/benchmark/linux/kernel/irq/dummychip.c
+num func: 3
+.44
+file: /home/hebi/benchmark/linux/kernel/irq/handle.c
+num func: 7
+.45
+file: /home/hebi/benchmark/linux/kernel/irq/irqdesc.c
+num func: 39
+....46
+file: /home/hebi/benchmark/linux/kernel/irq/irqdomain.c
+num func: 57
+xx..x.......47
+file: /home/hebi/benchmark/linux/kernel/irq/manage.c
+num func: 63
+...x........x.48
+file: /home/hebi/benchmark/linux/kernel/irq/matrix.c
+num func: 16
+x..49
+file: /home/hebi/benchmark/linux/kernel/irq/migration.c
+num func: 3
+x50
+file: /home/hebi/benchmark/linux/kernel/irq/msi.c
+num func: 21
+...51
+file: /home/hebi/benchmark/linux/kernel/irq/pm.c
+num func: 10
+..52
+file: /home/hebi/benchmark/linux/kernel/irq/proc.c
+num func: 30
+.......53
+file: /home/hebi/benchmark/linux/kernel/irq/resend.c
+num func: 1
+54
+file: /home/hebi/benchmark/linux/kernel/irq/spurious.c
+num func: 14
+xx55
+file: /home/hebi/benchmark/linux/kernel/irq_work.c
+num func: 9
+x.x.56
+file: /home/hebi/benchmark/linux/kernel/jump_label.c
+num func: 0
+57
+file: /home/hebi/benchmark/linux/kernel/kallsyms.c
+num func: 35
+x.......58
+file: /home/hebi/benchmark/linux/kernel/kexec.c
+num func: 9
+xx59
+file: /home/hebi/benchmark/linux/kernel/kexec_core.c
+num func: 34
+xxxxxxx60
+file: /home/hebi/benchmark/linux/kernel/kmod.c
+num func: 3
+x61
+file: /home/hebi/benchmark/linux/kernel/kprobes.c
+num func: 107
+...................62
+file: /home/hebi/benchmark/linux/kernel/ksysfs.c
+num func: 17
+..63
+file: /home/hebi/benchmark/linux/kernel/kthread.c
+num func: 45
+.....x.x.64
+file: /home/hebi/benchmark/linux/kernel/locking/mutex.c
+num func: 41
+.......65
+file: /home/hebi/benchmark/linux/kernel/locking/osq_lock.c
+num func: 6
+x66
+file: /home/hebi/benchmark/linux/kernel/locking/percpu-rwsem.c
+num func: 7
+67
+file: /home/hebi/benchmark/linux/kernel/locking/qrwlock.c
+num func: 2
+68
+file: /home/hebi/benchmark/linux/kernel/locking/qspinlock.c
+num func: 10
+..69
+file: /home/hebi/benchmark/linux/kernel/locking/rtmutex.c
+num func: 48
+.......x70
+file: /home/hebi/benchmark/linux/kernel/locking/rwsem-xadd.c
+num func: 16
+71
+file: /home/hebi/benchmark/linux/kernel/locking/rwsem.c
+num func: 9
+..72
+file: /home/hebi/benchmark/linux/kernel/locking/semaphore.c
+num func: 12
+...73
+file: /home/hebi/benchmark/linux/kernel/locking/spinlock.c
+num func: 23
+.74
+file: /home/hebi/benchmark/linux/kernel/memremap.c
+num func: 8
+75
+file: /home/hebi/benchmark/linux/kernel/module.c
+num func: 197
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx76
+file: /home/hebi/benchmark/linux/kernel/notifier.c
+num func: 25
+...77
+file: /home/hebi/benchmark/linux/kernel/nsproxy.c
+num func: 11
+xx.78
+file: /home/hebi/benchmark/linux/kernel/panic.c
+num func: 28
+...79
+file: /home/hebi/benchmark/linux/kernel/params.c
+num func: 59
+x..x.x........80
+file: /home/hebi/benchmark/linux/kernel/pid.c
+num func: 24
+......81
+file: /home/hebi/benchmark/linux/kernel/pid_namespace.c
+num func: 20
+.x...82
+file: /home/hebi/benchmark/linux/kernel/power/console.c
+num func: 5
+83
+file: /home/hebi/benchmark/linux/kernel/power/hibernate.c
+num func: 40
+..x..........84
+file: /home/hebi/benchmark/linux/kernel/power/main.c
+num func: 34
+.....85
+file: /home/hebi/benchmark/linux/kernel/power/poweroff.c
+num func: 3
+.86
+file: /home/hebi/benchmark/linux/kernel/power/process.c
+num func: 5
+87
+file: /home/hebi/benchmark/linux/kernel/power/qos.c
+num func: 25
+.....x88
+file: /home/hebi/benchmark/linux/kernel/power/snapshot.c
+num func: 89
+................89
+file: /home/hebi/benchmark/linux/kernel/power/suspend.c
+num func: 31
+xxxxx90
+file: /home/hebi/benchmark/linux/kernel/power/swap.c
+num func: 36
+...........91
+file: /home/hebi/benchmark/linux/kernel/power/user.c
+num func: 7
+.92
+file: /home/hebi/benchmark/linux/kernel/printk/printk.c
+num func: 100
+xxxxxxxxxxxxxxxxxxxxx93
+file: /home/hebi/benchmark/linux/kernel/printk/printk_safe.c
+num func: 16
+....94
+file: /home/hebi/benchmark/linux/kernel/profile.c
+num func: 25
+........95
+file: /home/hebi/benchmark/linux/kernel/ptrace.c
+num func: 36
+xx...96
+file: /home/hebi/benchmark/linux/kernel/range.c
+num func: 6
+97
+file: /home/hebi/benchmark/linux/kernel/rcu/rcu_segcblist.c
+num func: 20
+.98
+file: /home/hebi/benchmark/linux/kernel/rcu/srcutree.c
+num func: 42
+xxxxxxxxx99
+file: /home/hebi/benchmark/linux/kernel/rcu/sync.c
+num func: 6
+100
+file: /home/hebi/benchmark/linux/kernel/rcu/tree.c
+num func: 154
+x...x......x.xx.......x....101
+file: /home/hebi/benchmark/linux/kernel/rcu/update.c
+num func: 23
+...102
+file: /home/hebi/benchmark/linux/kernel/reboot.c
+num func: 27
+.....103
+file: /home/hebi/benchmark/linux/kernel/relay.c
+num func: 48
+........104
+file: /home/hebi/benchmark/linux/kernel/resource.c
+num func: 60
+xxxxxxxxxxxxxxxx105
+file: /home/hebi/benchmark/linux/kernel/sched/clock.c
+num func: 21
+x.....106
+file: /home/hebi/benchmark/linux/kernel/sched/completion.c
+num func: 16
+...107
+file: /home/hebi/benchmark/linux/kernel/sched/core.c
+num func: 234
+xxxxx.xxx.xx..xx.xx.x.......x.........x.............108
+file: /home/hebi/benchmark/linux/kernel/sched/cpuacct.c
+num func: 20
+109
+file: /home/hebi/benchmark/linux/kernel/sched/cpudeadline.c
+num func: 14
+x..x.110
+file: /home/hebi/benchmark/linux/kernel/sched/cpufreq.c
+num func: 2
+111
+file: /home/hebi/benchmark/linux/kernel/sched/cpupri.c
+num func: 5
+x.112
+file: /home/hebi/benchmark/linux/kernel/sched/cputime.c
+num func: 20
+...x113
+file: /home/hebi/benchmark/linux/kernel/sched/deadline.c
+num func: 97
+xxxx.........114
+file: /home/hebi/benchmark/linux/kernel/sched/fair.c
+num func: 242
+x...x..x.x.x.x.....x....xx.x.....x....x.........115
+file: /home/hebi/benchmark/linux/kernel/sched/idle.c
+num func: 16
+.116
+file: /home/hebi/benchmark/linux/kernel/sched/idle_task.c
+num func: 11
+.117
+file: /home/hebi/benchmark/linux/kernel/sched/isolation.c
+num func: 8
+...118
+file: /home/hebi/benchmark/linux/kernel/sched/loadavg.c
+num func: 13
+.x119
+file: /home/hebi/benchmark/linux/kernel/sched/membarrier.c
+num func: 6
+x120
+file: /home/hebi/benchmark/linux/kernel/sched/rt.c
+num func: 101
+xx.x.....xx......121
+file: /home/hebi/benchmark/linux/kernel/sched/stats.c
+num func: 6
+.122
+file: /home/hebi/benchmark/linux/kernel/sched/stop_task.c
+num func: 13
+......123
+file: /home/hebi/benchmark/linux/kernel/sched/swait.c
+num func: 9
+..124
+file: /home/hebi/benchmark/linux/kernel/sched/topology.c
+num func: 47
+..........125
+file: /home/hebi/benchmark/linux/kernel/sched/wait.c
+num func: 23
+......126
+file: /home/hebi/benchmark/linux/kernel/sched/wait_bit.c
+num func: 20
+...127
+file: /home/hebi/benchmark/linux/kernel/seccomp.c
+num func: 36
+xxx....128
+file: /home/hebi/benchmark/linux/kernel/signal.c
+num func: 184
+xxxx..x..........129
+file: /home/hebi/benchmark/linux/kernel/smp.c
+num func: 29
+x130
+file: /home/hebi/benchmark/linux/kernel/smpboot.c
+num func: 20
+..131
+file: /home/hebi/benchmark/linux/kernel/softirq.c
+num func: 36
+xxxxxxxx132
+file: /home/hebi/benchmark/linux/kernel/stacktrace.c
+num func: 5
+xx133
+file: /home/hebi/benchmark/linux/kernel/stop_machine.c
+num func: 25
+...134
+file: /home/hebi/benchmark/linux/kernel/sys.c
+num func: 141
+xxxxx...xx.......135
+file: /home/hebi/benchmark/linux/kernel/sys_ni.c
+num func: 1
+136
+file: /home/hebi/benchmark/linux/kernel/sysctl.c
+num func: 44
+.........137
+file: /home/hebi/benchmark/linux/kernel/sysctl_binary.c
+num func: 10
+138
+file: /home/hebi/benchmark/linux/kernel/task_work.c
+num func: 3
+139
+file: /home/hebi/benchmark/linux/kernel/taskstats.c
+num func: 21
+.....140
+file: /home/hebi/benchmark/linux/kernel/time/alarmtimer.c
+num func: 35
+x.......141
+file: /home/hebi/benchmark/linux/kernel/time/clockevents.c
+num func: 31
+....x.....142
+file: /home/hebi/benchmark/linux/kernel/time/clocksource.c
+num func: 41
+xxxxxx143
+file: /home/hebi/benchmark/linux/kernel/time/hrtimer.c
+num func: 66
+...........144
+file: /home/hebi/benchmark/linux/kernel/time/itimer.c
+num func: 22
+...145
+file: /home/hebi/benchmark/linux/kernel/time/jiffies.c
+num func: 4
+146
+file: /home/hebi/benchmark/linux/kernel/time/ntp.c
+num func: 27
+.....147
+file: /home/hebi/benchmark/linux/kernel/time/posix-clock.c
+num func: 17
+....148
+file: /home/hebi/benchmark/linux/kernel/time/posix-cpu-timers.c
+num func: 48
+x.x...149
+file: /home/hebi/benchmark/linux/kernel/time/posix-timers.c
+num func: 96
+x..........150
+file: /home/hebi/benchmark/linux/kernel/time/tick-broadcast-hrtimer.c
+num func: 4
+.151
+file: /home/hebi/benchmark/linux/kernel/time/tick-broadcast.c
+num func: 39
+.............152
+file: /home/hebi/benchmark/linux/kernel/time/tick-common.c
+num func: 21
+....x153
+file: /home/hebi/benchmark/linux/kernel/time/tick-oneshot.c
+num func: 6
+x.x154
+file: /home/hebi/benchmark/linux/kernel/time/tick-sched.c
+num func: 39
+.x...155
+file: /home/hebi/benchmark/linux/kernel/time/time.c
+num func: 58
+...156
+file: /home/hebi/benchmark/linux/kernel/time/timeconv.c
+num func: 4
+157
+file: /home/hebi/benchmark/linux/kernel/time/timecounter.c
+num func: 5
+.158
+file: /home/hebi/benchmark/linux/kernel/time/timekeeping.c
+num func: 80
+...........x........159
+file: /home/hebi/benchmark/linux/kernel/time/timekeeping_debug.c
+num func: 4
+.160
+file: /home/hebi/benchmark/linux/kernel/time/timer.c
+num func: 74
+x..........x...161
+file: /home/hebi/benchmark/linux/kernel/time/timer_list.c
+num func: 17
+...162
+file: /home/hebi/benchmark/linux/kernel/trace/blktrace.c
+num func: 93
+.....x.......163
+file: /home/hebi/benchmark/linux/kernel/trace/power-traces.c
+num func: 0
+164
+file: /home/hebi/benchmark/linux/kernel/trace/ring_buffer.c
+num func: 135
+.........x..........165
+file: /home/hebi/benchmark/linux/kernel/trace/rpm-traces.c
+num func: 0
+166
+file: /home/hebi/benchmark/linux/kernel/trace/trace.c
+num func: 280
+....x.....xx..............................................167
+file: /home/hebi/benchmark/linux/kernel/trace/trace_clock.c
+num func: 5
+168
+file: /home/hebi/benchmark/linux/kernel/trace/trace_event_perf.c
+num func: 12
+..x.169
+file: /home/hebi/benchmark/linux/kernel/trace/trace_events.c
+num func: 115
+....x................170
+file: /home/hebi/benchmark/linux/kernel/trace/trace_events_filter.c
+num func: 138
+........................171
+file: /home/hebi/benchmark/linux/kernel/trace/trace_events_trigger.c
+num func: 60
+.............172
+file: /home/hebi/benchmark/linux/kernel/trace/trace_export.c
+num func: 1
+173
+file: /home/hebi/benchmark/linux/kernel/trace/trace_kprobe.c
+num func: 63
+..........174
+file: /home/hebi/benchmark/linux/kernel/trace/trace_nop.c
+num func: 5
+..175
+file: /home/hebi/benchmark/linux/kernel/trace/trace_output.c
+num func: 56
+..........176
+file: /home/hebi/benchmark/linux/kernel/trace/trace_printk.c
+num func: 19
+...177
+file: /home/hebi/benchmark/linux/kernel/trace/trace_probe.c
+num func: 51
+...178
+file: /home/hebi/benchmark/linux/kernel/trace/trace_sched_switch.c
+num func: 10
+...179
+file: /home/hebi/benchmark/linux/kernel/trace/trace_seq.c
+num func: 12
+..180
+file: /home/hebi/benchmark/linux/kernel/trace/trace_stat.c
+num func: 16
+.....181
+file: /home/hebi/benchmark/linux/kernel/trace/trace_uprobe.c
+num func: 63
+.x........182
+file: /home/hebi/benchmark/linux/kernel/tracepoint.c
+num func: 23
+...183
+file: /home/hebi/benchmark/linux/kernel/tsacct.c
+num func: 6
+184
+file: /home/hebi/benchmark/linux/kernel/ucount.c
+num func: 12
+..185
+file: /home/hebi/benchmark/linux/kernel/uid16.c
+num func: 51
+...186
+file: /home/hebi/benchmark/linux/kernel/umh.c
+num func: 16
+x...187
+file: /home/hebi/benchmark/linux/kernel/user.c
+num func: 8
+.188
+file: /home/hebi/benchmark/linux/kernel/utsname.c
+num func: 11
+189
+file: /home/hebi/benchmark/linux/kernel/utsname_sysctl.c
+num func: 5
+190
+file: /home/hebi/benchmark/linux/kernel/workqueue.c
+num func: 160
+xxxxxxxxxxxxxxxxxxxxxxxxxxxx

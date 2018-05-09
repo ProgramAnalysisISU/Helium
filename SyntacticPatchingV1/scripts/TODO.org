@@ -1,0 +1,14 @@
+#+TITLE: TODO list for Helium scripting
+
+- [ ] a script to download all gnu projects
+- [ ] a script for calculate meta information for benchmarks, e.g. loc, size
+- [ ] a script for detecting the major language of a benchmark(possibly by using cloc), the percentage of the used languages
+- [ ] a script to detect if there're some possible library codes that is not part of the benchmark source
+
+* The doc for the scripts
+** How to do slice on a bunch of projects?
+- =csurf-build-bundle.sh /path/to/folder/of/benchmarks=:
+  this will output compile status, if success, it should output 0.
+  So safely remove the non-zero benchmarks.
+- =generate-slicing-criteria-bundle.sh /path/to/folder/of/benchmarks <10|100>=
+- =csurf-slicing-bundle.sh /path/to/folder/of/benchmarks=

@@ -1,0 +1,364 @@
+#+TITLE: Benchmark
+#+LATEX_CLASS: article
+#+OPTIONS: toc:nil date:nil
+#+LATEX_HEADER: \usepackage{fullpage}
+# #+LATEX_CLASS: acmart
+
+* Syntactic Patching Benchmarks
+
+** linux
+Some reference
+- bugzilla: https://bugzilla.kernel.org/
+- kernel documents: https://www.kernel.org/doc/html/latest/
+- https://lwn.net/
+- https://kernelnewbies.org/
+- LDD3: https://lwn.net/Kernel/LDD3/
+
+** Benchmarks
+
+Popular
+- linux: https://github.com/torvalds/linux
+- git [small]: https://github.com/git/git
+- openssl: https://github.com/openssl/openssl
+- vim [small]: https://github.com/vim/vim
+- FFmpeg: https://github.com/FFmpeg/FFmpeg
+
+Web server
+- h2o: https://github.com/h2o/h2o
+- nginx: https://github.com/nginx/nginx
+- httpd: https://github.com/apache/httpd
+- lighttpd
+
+GNU
+- findutils
+- make
+- coreutils
+- grep
+
+Other
+- php-src: https://github.com/php/php-src
+- redis: https://github.com/antirez/redis
+- tmux: https://github.com/tmux/tmux
+- curl: https://github.com/curl/curl
+
+
+* Existing Bug Benchmarks
+
+
+** [#A] Verisec Suite
+
+http://se.cs.toronto.edu/index.php/Verisec_Suite
+
+The benchmark is rather small and artificial. LOC size range from 10
+to 200.  Some of the benchmark has different versions, big and small,
+simple and full.
+
+| bug          | comment             | class                   | CVE           |
+|--------------+---------------------+-------------------------+---------------|
+| apache       | buffer overflow     |                         | CVE-2004-0940 |
+|              | off-by-one          |                         | CVE-2006-3747 |
+|--------------+---------------------+-------------------------+---------------|
+| bind         | buffer overflow     |                         | CA-1999-14    |
+|              | buffer overflow     |                         | CVE-2001-0011 |
+|--------------+---------------------+-------------------------+---------------|
+| edbrowse     | buffer overflow     |                         | CVE-2006-6909 |
+| gxine        | buffer overflow     |                         | CVE-2007-0406 |
+| libgd        | out-of-bounds read  |                         | CVE-2007-0455 |
+| MADWiFi      | buffer overflow     |                         | CVE-2006-6332 |
+| NetBSD-libc  | buffer overflow     |                         | CVE-2006-6652 |
+| OpenSER      | buffer overflow     |                         | CVE-2006-6749 |
+|              | buffer overflow     |                         | CVE-2006-6876 |
+| samba        | buffer overflow     |                         | CVE-2007-0453 |
+| sendmail     | buffer overflow     |                         | CVE-1999-0047 |
+|              | buffer overflow     | caused by infinite loop | CVE-1999-0206 |
+|              | arithmetic overflow |                         | CVE-2001-0653 |
+|              | buffer overflow     |                         | CVE-2002-0906 |
+|              | buffer overflow     |                         | CVE-2002-1337 |
+|              | buffer overflow     |                         | CVE-2003-0161 |
+|              | buffer overflow     |                         | CVE-2003-0681 |
+|--------------+---------------------+-------------------------+---------------|
+| SpamAssassin | off-by-one          |                         | BID-6679      |
+| wu-ftpd      | 3 buffer overflows  |                         | CVE-1999-0368 |
+|              | buffer overflow     | trivial                 | CVE-1999-0878 |
+|              | buffer overflow     | wrong bounds            | CVE-2003-0466 |
+
+*** TODO get original code 
+*** TODO identify vulnerability location
+*** TODO test case to produce the vulnerability
+*** TODO further classify the buffer overflow
+- string copy from user input (no bounds checking)?
+- incorrect bounds checking?
+- off-by-one?
+- loop over the buffer?
+- trivial?
+
+** SIR cite:2005-Journal-Do-Supporting
+17 C code and 7 Java code. Seeded fault. No good document. Also this
+contains Siemens suite (tcas, schedule2, schedule, totinfo,
+printtokens, printtokens2, replace).
+
+** Corebench cite:2014-ISSTA-Böhme-Corebench
+
+make, coreutils, find, grep
+
+| benchmark | git repo                                    |
+|-----------+---------------------------------------------+
+| coreutils | http://savannah.gnu.org/projects/coreutils/ |
+| findutils | http://savannah.gnu.org/projects/findutils/ |
+| grep      | http://savannah.gnu.org/projects/grep/      |
+| gnulib    |                                             |
+
+In Compile status, 0 means compile error, 1 means error, 2 means error caused by GNULib.
+
+| benchmark | bug type            | symptom       |
+|-----------+---------------------+---------------+
+| 6. cut    | access out of range | segment fault |
+| 17. cut   | access out of range | segment fault |
+|-----------+---------------------+---------------+
+| 34. find  | NA                  | core dump     |
+| 42. grep  | heap overrun        |               |
+|-----------+---------------------+---------------+
+| 45. grep  |                     | sigsegv       |
+| 51. grep  |                     | infinite loop |
+| 52. grep  |                     | segment fault |
+
+** DbgBench cite:2017-FSE-Böhme-Bug
+This is the same set of programs of Corebench by the same
+group. Compared to Corebench, it contains bug analysis and bug fixes,
+by different participants.
+
+Overall Insights:
+- Status: showing 5 differnet types of bugs
+  - find (66c536bb) functional bug, works
+  - find (07b941b1) buffer overflow, works
+  - find (183115d0) resource leak, only need some modeling
+  - find (c8491c11) null dereference, partially works
+  - grep (db9d6340) infinite loop, in progress, need better modeling
+- Transfer function is very simple (arithmetic of pointer address)
+- For this benchmark: loops are rare, conditionals are everywhere
+- Failure condition not regular, manual specify required
+- Due to extensive use of function pointers and function lookup
+  tables, Caller-callee information not available unless doing pointer
+  analysis
+
+** bufbench by Misha Zitser cite:2004-FSE-Zitser-Testing
+- The suite contains various versions of Sendmail, BIND, and WU-FTPD
+  (14 total BAD OK pair).
+- These are all buffer overflow.  
+- code is artificial
+
+To get the source:
+- bind: ftp://ftp.isc.org/isc/
+- sendmail: ftp://ftp.sendmail.org/pub/sendmail/past-releases/
+
+| name     | CVE           | comment                   |
+|----------+---------------+---------------------------|
+| bind     | CA-1999-14    | no bounds checking        |
+|          | CA-1999-14    | arithmetic overflow       |
+|          | CVE-1999-0009 | no bounds checking        |
+|          | CVE-2001-0013 | no bounds checking        |
+|----------+---------------+---------------------------|
+| sendmail | CA-2003-07    | caused by infinite loop   |
+|          | CVE-1999-0131 | no bounds checking        |
+|          | CVE-1999-0206 | pointer not reset         |
+|          | CVE-1999-0047 | incorrect bounds checking |
+|          | CA-2003-12    |                           |
+|          | CVE-2001-0653 | arithmetic overflow       |
+|          | CVE-2002-0906 | no bounds checking        |
+|----------+---------------+---------------------------|
+| wuftp    | CVE-1999-0878 | no bounds checking        |
+|          | CAN-2003-0466 | incorrect bounds checking |
+|          | CVE-1999-0368 | no bounds checking        |
+
+** bugbench cite:2005-Workshop-Lu-Bugbench
+
+17 C/C++ benchmarks, with various of bug kinds, including:
+- Memory related bugs: buffer overflows, stack smashing, double frees,
+  uninitialized reads, memory leaks
+- Concurrency bugs: data races, atomic violations, Deadlock
+- Semantic bugs
+
+The bug signature is simple.  Half (5/10) of the bugs is =strcpy= to a
+fix-sized buffer, where the source string is from the user input, 2 of
+them is single procedure manifest.  This results in the bug signature
+to be just several lines of code.
+
+#+CAPTION: Bugbench
+| benchmark name        | Kind | kind-description           | comments                                | difficulties                                                        |
+|-----------------------+------+----------------------------+-----------------------------------------+---------------------------------------------------------------------|
+| gzip-1.2.4            | A    | miss checking input buffer |                                         |                                                                     |
+| ncompress-4.2.4       | A    | miss checking input buffer | stack array                             |                                                                     |
+| polymorph-0.4.0 bug 1 | A    | miss checking input buffer | global array                            |                                                                     |
+|-----------------------+------+----------------------------+-----------------------------------------+---------------------------------------------------------------------|
+| bc-1.06 bug 3         | A    | miss checking input buffer |                                         | generated from bison, hard to analyze                               |
+|-----------------------+------+----------------------------+-----------------------------------------+---------------------------------------------------------------------|
+| polymorph-0.4.0 bug 2 | A    | miss checking input buffer | stack array                             | No bug triggering input                                             |
+| squid-2.3             | B    | single procedure manifest  | space allocation size calculation wrong |                                                                     |
+| cvs-1.11.4            | B    | single procedure manifest  | double free,                            | Require running cvs server, no exploit-cvs.c file found             |
+| bc-1.06 bug 1         | C    | wrong bounds checking      | use wrong variable                      | No bug triggering input                                             |
+| bc-1.06 bug 2         | C    | semantic                   |                                         | No bug triggering input                                             |
+| man-1.5h1             | C    | wrong bounds checking      | wrong use of sizeof                     |                                                                     |
+| squid-2.3             |      |                            |                                         | Complicate to run, don't know how to start and connect squid server |
+
+Other 4 bugs: =httpd-2.0.48=, =msql-4.1.1=, =mysql-3.23.56=,
+=mysql-4.1.1= are about concurrency bugs, which is not analyzed for
+now.
+
+** Individual Benchmarks
+
+| name         | description                   | component                              |
+|--------------+-------------------------------+----------------------------------------|
+| gzip         | buffer overflow               | gzip 1.2.4 -> 1.3.3, 1.3.3 fix the bug |
+| putty [fn:2] | heap corruption vulnerability | 0.56 -> 0.57                           |
+| tightvnc     | Unknown                       | 1.2.0, 1.2.2, bug, fix, 1.3.9          |
+| libpng       |                               | 9 versions [fn:1]                      |
+
+[fn:2] http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/vuln-sftp-string.html
+[fn:1]
+Libpng: 1.5.14 integer overflow
+Integer Overflow 0.28 No 0.24
+6 2 6 0.48 0 1.45
+libpng-1.5.14
+Libpng: 1.0.57-1.2.48 integer/buffer problems
+
+** Patch Analysis by Zichao Qi from MIT cite:2015-ISSTA-Qi-Analysis
+- website: http://people.csail.mit.edu/zichaoqi/PatchAnalysis/
+- There're pretty good bug report, as well as manually identified official patches.
+- Another difficulty to study these bugs is, the PatchAnalysis webpage
+  does not gives the test case to expose the bugs.
+
+several other links
+- https://sourceforge.net/projects/rsrepair/files/
+- http://dijkstra.cs.virginia.edu/genprog/
+
+The benchmarks are from *GenProg* (other two auto repair tools under
+evaluation uses the same benchmarks).  These auto repair tools all use
+the common /generate-and-validate/ approach.  So the defect tends to
+be *simple*, e.g. one line change.  More importantly, most of the bugs
+produce */wrong value/* instead of gives out runtime symptom, this
+benefits /generate-and-validate/ approach.
+
+This might be useful to show the original patch can be used to fix the
+small buggy counterpart generated by Helium, and vice versa.
+
+#+CAPTION: PatchAnalysis
+| Bug Kind          | symptom                                            | comment                               | Benchmark                                                                                                                                  |
+|-------------------+----------------------------------------------------+---------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------|
+|                   | Wrong value                                        |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/fbc/fbc-bug-5458-5459/][fbc-bug-5458-5495]]                                           |
+|                   | NA                                                 |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/gmp/gmp-bug-14166-14167][gmp-bug-14166-14167]]                                        |
+|                   | crash                                              | command line arg parsing              | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/gzip/gzip-bug-3fe0caeada6aa3-39a362ae9d9b00][gzip-bug-3fe0caeada6aa3-39a362ae9d9b00]] |
+|                   | NA                                                 | command line arg parsing              | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/gzip/gzip-bug-a1d3d4019ddd22-f17cbd13a1d0a7][gzip-bug-a1d3d4019ddd22-f17cbd13a1d0a7]] |
+|-------------------+----------------------------------------------------+---------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------|
+| Int Overflow      |                                                    | bug link unavailable                  | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/libtiff/libtiff-bug-0860361d-1ba75257][libtiff-bug-0860361d-1ba75257]]                |
+|                   | Incorrect Output: warning message, "unable to ..." |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/libtiff/libtiff-bug-5b02179-3dfb33b][libtiff-bug-5b02179-3dfb33b]]                    |
+|                   |                                                    | auto-fix simply return 0              | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/libtiff/libtiff-bug-90d136e4-4c66680f][libtiff-bug-90d136e4-4c66680f]]                |
+|                   |                                                    | auto-fix print warning "ignoring ..." | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/libtiff/libtiff-bug-d13be72c-ccadf48a][libtiff-bug-d13be72c-ccadf48a]]                |
+| Return Code       | When success, still return non-zero                |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/libtiff/libtiff-bug-ee2ce5b7-b5691a5a][libtiff-bug-ee2ce5b7-b5691a5a]]                |
+|-------------------+----------------------------------------------------+---------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------|
+|                   | NA                                                 |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/php/php-bug-307931-307934][php-bug-307931-307934]]                                    |
+|                   | Wrong value                                        |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/php/php-bug-308525-308529][php-bug-308525-308529]]                                    |
+|                   | Wrong value (field missing)                        |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/php/php-bug-309111-309159][php-bug-309111-309159]]                                    |
+|                   | Wrong value                                        |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/php/php-bug-309892-309910][php-bug-309892-309910]]                                    |
+| Regression        | Crash (Seg Fault)                                  |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/php/php-bug-309986-310009][php-bug-309986-310009]]                                    |
+|                   | Wrong value                                        |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/php/php-bug-310011-310050][php-bug-310011-310050]]                                    |
+|                   | Warning                                            |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/php/php-bug-310370-310389][php-bug-310370-310389]]                                    |
+|                   | Crash (Seg Fault)                                  |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/php/php-bug-310673-310681][php-bug-310673-310681]]                                    |
+|                   | Wrong value                                        |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/php/php-bug-311346-311348][php-bug-311346-311348]]                                    |
+|-------------------+----------------------------------------------------+---------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------|
+| Miss Neg Checking | EINVAL errno                                       | Single Code Manifest                  | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/python/python-bug-69223-69224][python-bug-69223-69224]]                               |
+| Enhancemane       | NA                                                 | Y2K                                   | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/python/python-bug-69783-69784][python-bug-69783-69784]]                               |
+|                   | Wrong value                                        |                                       | [[http://people.csail.mit.edu/zichaoqi/PatchAnalysis/python/python-bug-70098-70101][python-bug-70098-70101]]                               |
+|-------------------+----------------------------------------------------+---------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------|
+|                   |                                                    |                                       | wireshark-bug-37112-37111                                                                                                                  |
+|                   |                                                    |                                       | wireshark-bug-37172-37171                                                                                                                  |
+|                   |                                                    |                                       | wireshark-bug-37172-37173                                                                                                                  |
+|                   |                                                    |                                       | wireshark-bug-37284-37285                                                                                                                  |
+
+
+
+
+* Collect Benchmark
+
+** Type of bugs
+
+| bug type                         | alternative keywords                                  |
+|----------------------------------+-------------------------------------------------------|
+| NULL pointer dereference         |                                                       |
+| access violation / segment fault | memory, read, corruption, out of bound, out of buffer |
+| use after free                   | Dangling pointer                                      |
+| double free                      |                                                       |
+| infinite loop                    | hang                                                  |
+| infinite recursion               |                                                       |
+| buffer overflow (less)           | overwrite, memory, stack, overrun                     |
+| stack overflow                   |                                                       |
+| off-by-one                       | e.g. for loop iteration                               |
+|----------------------------------+-------------------------------------------------------|
+| Integer Overflow                 | integer, overflow, signedness, widthness, underflow   |
+| Format String                    | format, string, printf, scanf                         |
+| Race Condition / Deadlock        | race, racy, deadlock                                  |
+| performance bug                  |                                                       |
+| uninitialized var                |                                                       |
+| resource leak                    | memory leak, file handler leak                        |
+| syntax bug                       | e.g. x=5 v.s. x==5                                    |
+|----------------------------------+-------------------------------------------------------|
+| divide by zero                   |                                                       |
+| arithmetic overflow              |                                                       |
+| loss of precision                |                                                       |
+|----------------------------------+-------------------------------------------------------|
+| Improper Access Control          | improper, unauthenticated, gain access, permission    |
+| Denial of Service / Crash        | denial service, DOS                                   |
+
+General keywords: corruption, segmentation fault, segfault, core dump,
+crash, infinite, hang, overflow
+
+** Popular Projects
+
+| benchmark name | priority | home page                                  |
+|----------------+----------+--------------------------------------------+
+| gzip           |        1 | http://savannah.gnu.org/projects/gzip/     |
+| findutils      |        1 | http://savannah.gnu.org/projects/findutils |
+| coreutils      |        2 | http://savannah.gnu.org/projects/coreutils |
+| apache httpd-2 |        3 | https://httpd.apache.org/                  |
+| tar            |        3 | http://savannah.gnu.org/projects/tar/      |
+| gnu indent     |        4 | http://savannah.gnu.org/projects/indent    |
+
+** Websites
+
+| Website name | URL                                |
+|--------------+------------------------------------|
+| httrack      | https://github.com/xroche/httrack  |
+| CVE          | http://cve.mitre.org/              |
+| mozilla      | https://bugzilla.mozilla.org/      |
+| php          | https://bugs.php.net/              |
+
+Sample query for GitHub:
+#+BEGIN_EXAMPLE
+https://api.github.com/search/repositories?q=language:c&stars:>10&per_page=100
+#+END_EXAMPLE
+
+** CVE
+
+What to look for:
+1. NULL pointer dereference
+2. Double free
+3. Use after free
+4. infinite loop / recursion
+5. off-by-one
+6. use of uninitialized variable
+6. divide by zero
+7. performance
+
+*** keywords used for search
+- null dereference -kernel -windows site:cve.mitre.org
+- free
+- use-after-free
+- double free
+- infinite
+
+*** Links for download archive
+- gxine: https://sourceforge.net/projects/xine/files/gxine/0.5.9/
+- sendmail: ftp://ftp.sendmail.org/pub/sendmail/past-releases/
+- openssl: https://www.openssl.org/source/old/
+
+
+bibliography:../../research/bib/auto/2015-ISSTA.bib,../../research/bib/manual/Manual.bib,../../research/bib/auto/2004-FSE.bib,../../research/bib/auto/2017-FSE.bib,../../research/bib/auto/2014-ISSTA.bib

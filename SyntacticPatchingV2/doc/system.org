@@ -1,0 +1,112 @@
+#+TITLE: System Component Design
+
+* Link Object file
+
+Originally we design to extract the following into a complete program:
+1. selected patched code
+2. other dependent code snippets. 
+
+The first part is done and tested perfectly on both small and big
+projects. But it turns out the second part, the dependent code
+snippets, is very tricky and tedious to extract, especially for larger
+projects. And considering:
+1. this does not contribute to our algorithm (both syntactic patching
+   and demand-driven), and
+2. we didn't modify those functions anyway, they are not code of
+   interest
+
+1. I'm using a flat database for all the code snippets, e.g. code for
+   function foo. But it is showing not powerful enough:
+   - Different translation units contain many inconsistent
+     definition.
+   - C projects use compiler flags to look for header files, so if we
+     want to know which definition is used in a translation unit, we
+     need to analyze the Makefile
+   - We need a powerful database to keep track of which file contains
+     which function, and use which definition
+
+2. Previously we simply put everything into a single translation unit.
+   - The order of snippets is very hard to get right. After all, they
+     are not supposed to be together if they are in different
+     translation unit.
+   - Different part of code might use different definition of
+     functions and types. It is an error to put them together.
+
+To correctly handle this, we need non-trivial database change, and we
+have to generate code into different translation units according to
+their position in original source code. In both kernel code and git
+code, functions are very strongly connected, and it means most of the
+time, we need to generate large amount of files.
+
+It is mostly engineering work on compiler side, and I do feel I'm
+writing many analysis that a compiler has already done. I think we
+should just use the compiler for those tasks.
+
+*Clearly we need a better way.*
+
+This suggests the following simplification:
+1. Generate one file for each translation unit that contains selected
+   code.
+2. For any external functions, do not extract the definition, but link
+   the object code.
+
+This solves both problems:
+1. There is no need for a database, because the pre-processor will
+   gives the correct types, for each translation unit. There will be
+   no snippet duplication or order issues.
+2. Since we don't generate code for external functions, the number of
+   generated files are exactly the same as the number of files
+   containing selected code.
+
+** The Solution
+1. On the clang side, for each file, output all snippets from included
+   local files. Or can I just include those files? *Yes, just include
+   them for now.*
+2. Thus, the clang will output same as now, except adding some include
+   directives.
+3. Output ALL decls other than functions, to main.h. For functions,
+   add declarations.
+4. For all functions that contains selected part, create a different
+   name =helium_XXX=, and output to the main.c
+5. I should actually output everything in the same file, because there
+   might be snippet decls between function defs.
+
+Then, I'm done.
+
+* Snippet
+
+I cannot simply remove a decl for a inner TagDecl because
+1. it declares something visible to the program. I need to attach this
+   typename info to the outside *typedef or variable decl*.
+   - typedefname
+   - var decl also add the tag into scope
+2. typedef can define multiple types at once, and it will show up as
+   multiple typedef-decl in clang. I need to recognize this as well
+3. similarly, variable decl can also declare multiple variables, and
+   each of them appear as a decl in clang
+
+Solution:
+1. if the TagDecl does not have a name, ignore it
+2. For all other TagDecl, export it to Racket
+3. For all typedef-decl, export to Racket, with its *source code*
+4. For all variable decl
+4. In racket, examine all decls and, pick the outmost, associate the
+   inner *names* to the outside, and ignore the inner one.
+
+This means, when one of the type, or variable is required, all of them
+will be made available from Helium.
+
+I also tried to construct it, but
+1. function pointer is non-trivial to construct
+2. the getAsString method from QualType is not good, e.g. anonymous
+   struct will have gabage string in it
+3. I'm not even trying more complicated ones
+
+So, I will not construct it, but use the source information.
+
+** DONE validate the snippets and gives warnings
+CLOSED: [2018-01-05 Fri 20:23]
+- static functions
+- multiple definitions
+** CANCELED enum members
+CLOSED: [2018-01-23 Tue 12:14]

@@ -1,0 +1,394 @@
+[
+    {
+        "package": "libpng",
+        "size": "243320",
+        "includes": [
+            "/usr/include/pnglibconf.h",
+            "/usr/include/png.h",
+            "/usr/include/pngconf.h",
+            "/usr/include/libpng16/pnglibconf.h",
+            "/usr/include/libpng16/png.h",
+            "/usr/include/libpng16/pngconf.h"
+        ],
+        "libs": [
+            "/usr/lib/libpng16.so",
+            "/usr/lib/libpng.so"
+        ]
+    },
+    {
+        "package": "libx11",
+        "size": "2124148",
+        "includes": [
+            "/usr/include/X11/Xresource.h",
+            "/usr/include/X11/Xregion.h",
+            "/usr/include/X11/XlibConf.h",
+            "/usr/include/X11/cursorfont.h",
+            "/usr/include/X11/Xlibint.h",
+            "/usr/include/X11/ImUtil.h",
+            "/usr/include/X11/XKBlib.h",
+            "/usr/include/X11/Xcms.h",
+            "/usr/include/X11/Xlib.h",
+            "/usr/include/X11/Xlib-xcb.h",
+            "/usr/include/X11/Xutil.h",
+            "/usr/include/X11/Xlocale.h"
+        ],
+        "libs": [
+            "/usr/lib/libX11.so",
+            "/usr/lib/libX11-xcb.so"
+        ]
+    },
+    {
+        "package": "libxtst",
+        "size": "28836",
+        "includes": [
+            "/usr/include/X11/extensions/record.h",
+            "/usr/include/X11/extensions/XTest.h"
+        ],
+        "libs": [
+            "/usr/lib/libXtst.so"
+        ]
+    },
+    {
+        "package": "xproto",
+        "size": "146944",
+        "includes": [
+            "/usr/include/X11/Xos.h",
+            "/usr/include/X11/XWDFile.h",
+            "/usr/include/X11/Xwindows.h",
+            "/usr/include/X11/Xthreads.h",
+            "/usr/include/X11/Xpoll.h",
+            "/usr/include/X11/Xmd.h",
+            "/usr/include/X11/Xalloca.h",
+            "/usr/include/X11/Xos_r.h",
+            "/usr/include/X11/XF86keysym.h",
+            "/usr/include/X11/Xatom.h",
+            "/usr/include/X11/Xfuncproto.h",
+            "/usr/include/X11/keysymdef.h",
+            "/usr/include/X11/Xfuncs.h",
+            "/usr/include/X11/DECkeysym.h",
+            "/usr/include/X11/Xprotostr.h",
+            "/usr/include/X11/Xwinsock.h",
+            "/usr/include/X11/Xdefs.h",
+            "/usr/include/X11/Xarch.h",
+            "/usr/include/X11/HPkeysym.h",
+            "/usr/include/X11/Xproto.h",
+            "/usr/include/X11/Xw32defs.h",
+            "/usr/include/X11/Sunkeysym.h",
+            "/usr/include/X11/X.h",
+            "/usr/include/X11/Xosdefs.h",
+            "/usr/include/X11/keysym.h",
+            "/usr/include/X11/ap_keysym.h"
+        ],
+        "libs": []
+    },
+    {
+        "package": "fuse2",
+        "size": "108132",
+        "includes": [
+            "/usr/include/fuse.h",
+            "/usr/include/ulockmgr.h",
+            "/usr/include/fuse/fuse_lowlevel_compat.h",
+            "/usr/include/fuse/fuse_opt.h",
+            "/usr/include/fuse/fuse_common_compat.h",
+            "/usr/include/fuse/fuse.h",
+            "/usr/include/fuse/fuse_common.h",
+            "/usr/include/fuse/fuse_compat.h",
+            "/usr/include/fuse/fuse_lowlevel.h",
+            "/usr/include/fuse/cuse_lowlevel.h"
+        ],
+        "libs": [
+            "/usr/lib/libfuse.so",
+            "/usr/lib/libulockmgr.so"
+        ],
+        "flags": ["-D_FILE_OFFSET_BITS=64"]
+    },
+    {
+        "package": "jdk8-openjdk",
+        "size": "8526820",
+        "includes": [
+            "/usr/lib/jvm/java-8-openjdk/include/jdwpTransport.h",
+            "/usr/lib/jvm/java-8-openjdk/include/jvmticmlr.h",
+            "/usr/lib/jvm/java-8-openjdk/include/classfile_constants.h",
+            "/usr/lib/jvm/java-8-openjdk/include/jawt.h",
+            "/usr/lib/jvm/java-8-openjdk/include/jni.h",
+            "/usr/lib/jvm/java-8-openjdk/include/jvmti.h",
+            "/usr/lib/jvm/java-8-openjdk/include/linux/jni_md.h",
+            "/usr/lib/jvm/java-8-openjdk/include/linux/jawt_md.h"
+        ],
+        "libs": [
+            "/usr/lib/jvm/java-8-openjdk/lib/amd64/libjawt.so",
+            "/usr/lib/jvm/java-8-openjdk/lib/amd64/jli/libjli.so"
+        ]
+    },
+    {
+        "package": "pango",
+        "size": "438044",
+        "includes": [
+            "/usr/include/pango-1.0/pango/pangocairo.h",
+            "/usr/include/pango-1.0/pango/pangoxft-render.h",
+            "/usr/include/pango-1.0/pango/pangoxft.h",
+            "/usr/include/pango-1.0/pango/pangoft2.h",
+            "/usr/include/pango-1.0/pango/pangofc-decoder.h",
+            "/usr/include/pango-1.0/pango/pangofc-fontmap.h",
+            "/usr/include/pango-1.0/pango/pangofc-font.h",
+            "/usr/include/pango-1.0/pango/pango-ot.h",
+            "/usr/include/pango-1.0/pango/pango-enum-types.h",
+            "/usr/include/pango-1.0/pango/pango-features.h",
+            "/usr/include/pango-1.0/pango/pango-version-macros.h",
+            "/usr/include/pango-1.0/pango/pango-utils.h",
+            "/usr/include/pango-1.0/pango/pango-types.h",
+            "/usr/include/pango-1.0/pango/pango-tabs.h",
+            "/usr/include/pango-1.0/pango/pango-script.h",
+            "/usr/include/pango-1.0/pango/pango-renderer.h",
+            "/usr/include/pango-1.0/pango/pango-modules.h",
+            "/usr/include/pango-1.0/pango/pango-matrix.h",
+            "/usr/include/pango-1.0/pango/pango-layout.h",
+            "/usr/include/pango-1.0/pango/pango-language.h",
+            "/usr/include/pango-1.0/pango/pango-item.h",
+            "/usr/include/pango-1.0/pango/pango-gravity.h",
+            "/usr/include/pango-1.0/pango/pango-glyph-item.h",
+            "/usr/include/pango-1.0/pango/pango-glyph.h",
+            "/usr/include/pango-1.0/pango/pango-fontset.h",
+            "/usr/include/pango-1.0/pango/pango-fontmap.h",
+            "/usr/include/pango-1.0/pango/pango-font.h",
+            "/usr/include/pango-1.0/pango/pango-engine.h",
+            "/usr/include/pango-1.0/pango/pango-coverage.h",
+            "/usr/include/pango-1.0/pango/pango-context.h",
+            "/usr/include/pango-1.0/pango/pango-break.h",
+            "/usr/include/pango-1.0/pango/pango-bidi-type.h",
+            "/usr/include/pango-1.0/pango/pango-attributes.h",
+            "/usr/include/pango-1.0/pango/pango.h"
+        ],
+        "libs": [
+            "/usr/lib/libpangocairo-1.0.so",
+            "/usr/lib/libpangoxft-1.0.so",
+            "/usr/lib/libpangoft2-1.0.so",
+            "/usr/lib/libpango-1.0.so"
+        ]
+    },
+    {
+        "comment": "Do I need to add some header?? No hurt, adding it",
+        "package": "cairo",
+        "size": "736432",
+        "includes": [
+            "/usr/include/cairo/cairo-pdf.h",
+            "/usr/include/cairo/cairo-script.h",
+            "/usr/include/cairo/cairo-xlib.h",
+            "/usr/include/cairo/cairo-ft.h",
+            "/usr/include/cairo/cairo-script-interpreter.h",
+            "/usr/include/cairo/cairo-xlib-xrender.h",
+            "/usr/include/cairo/cairo-tee.h",
+            "/usr/include/cairo/cairo-gl.h",
+            "/usr/include/cairo/cairo.h",
+            "/usr/include/cairo/cairo-features.h",
+            "/usr/include/cairo/cairo-xcb.h",
+            "/usr/include/cairo/cairo-version.h",
+            "/usr/include/cairo/cairo-deprecated.h",
+            "/usr/include/cairo/cairo-ps.h",
+            "/usr/include/cairo/cairo-gobject.h",
+            "/usr/include/cairo/cairo-svg.h"
+        ],
+        "libs": [
+            "/usr/lib/libcairo-gobject.so",
+            "/usr/lib/libcairo-script-interpreter.so",
+            "/usr/lib/libcairo.so",
+            "/usr/lib/cairo/cairo-fdr.so",
+            "/usr/lib/cairo/cairo-sphinx.so",
+            "/usr/lib/cairo/libcairo-trace.so"
+        ]
+    },
+    {
+        "package": "libxcb",
+        "size": "993336",
+        "includes": [
+            "/usr/include/xcb/xproto.h",
+            "/usr/include/xcb/bigreq.h",
+            "/usr/include/xcb/xc_misc.h",
+            "/usr/include/xcb/composite.h",
+            "/usr/include/xcb/damage.h",
+            "/usr/include/xcb/dpms.h",
+            "/usr/include/xcb/dri2.h",
+            "/usr/include/xcb/dri3.h",
+            "/usr/include/xcb/present.h",
+            "/usr/include/xcb/glx.h",
+            "/usr/include/xcb/xcb.h",
+            "/usr/include/xcb/xcbext.h",
+            "/usr/include/xcb/randr.h",
+            "/usr/include/xcb/record.h",
+            "/usr/include/xcb/render.h",
+            "/usr/include/xcb/res.h",
+            "/usr/include/xcb/screensaver.h",
+            "/usr/include/xcb/shape.h",
+            "/usr/include/xcb/shm.h",
+            "/usr/include/xcb/sync.h",
+            "/usr/include/xcb/xevie.h",
+            "/usr/include/xcb/xf86dri.h",
+            "/usr/include/xcb/xfixes.h",
+            "/usr/include/xcb/xinerama.h",
+            "/usr/include/xcb/xinput.h",
+            "/usr/include/xcb/xkb.h",
+            "/usr/include/xcb/xprint.h",
+            "/usr/include/xcb/xselinux.h",
+            "/usr/include/xcb/xtest.h",
+            "/usr/include/xcb/xv.h",
+            "/usr/include/xcb/xvmc.h"
+        ],
+        "libs": [
+            "/usr/lib/libxcb.so",
+            "/usr/lib/libxcb-composite.so",
+            "/usr/lib/libxcb-damage.so",
+            "/usr/lib/libxcb-dpms.so",
+            "/usr/lib/libxcb-dri2.so",
+            "/usr/lib/libxcb-dri3.so",
+            "/usr/lib/libxcb-present.so",
+            "/usr/lib/libxcb-glx.so",
+            "/usr/lib/libxcb-randr.so",
+            "/usr/lib/libxcb-record.so",
+            "/usr/lib/libxcb-render.so",
+            "/usr/lib/libxcb-res.so",
+            "/usr/lib/libxcb-screensaver.so",
+            "/usr/lib/libxcb-shape.so",
+            "/usr/lib/libxcb-shm.so",
+            "/usr/lib/libxcb-sync.so",
+            "/usr/lib/libxcb-xf86dri.so",
+            "/usr/lib/libxcb-xfixes.so",
+            "/usr/lib/libxcb-xinerama.so",
+            "/usr/lib/libxcb-xinput.so",
+            "/usr/lib/libxcb-xkb.so",
+            "/usr/lib/libxcb-xtest.so",
+            "/usr/lib/libxcb-xv.so",
+            "/usr/lib/libxcb-xvmc.so"
+        ]
+    },
+    {
+        "package": "avahi",
+        "size": "426692",
+        "includes": [
+            "/usr/include/dns_sd.h",
+            "/usr/include/avahi-common/rlist.h",
+            "/usr/include/avahi-common/llist.h",
+            "/usr/include/avahi-common/error.h",
+            "/usr/include/avahi-common/gccmacro.h",
+            "/usr/include/avahi-common/thread-watch.h",
+            "/usr/include/avahi-common/simple-watch.h",
+            "/usr/include/avahi-common/timeval.h",
+            "/usr/include/avahi-common/watch.h",
+            "/usr/include/avahi-common/malloc.h",
+            "/usr/include/avahi-common/defs.h",
+            "/usr/include/avahi-common/cdecl.h",
+            "/usr/include/avahi-common/domain.h",
+            "/usr/include/avahi-common/alternative.h",
+            "/usr/include/avahi-common/address.h",
+            "/usr/include/avahi-common/strlst.h",
+            "/usr/include/avahi-core/lookup.h",
+            "/usr/include/avahi-core/publish.h",
+            "/usr/include/avahi-core/rr.h",
+            "/usr/include/avahi-core/log.h",
+            "/usr/include/avahi-core/core.h",
+            "/usr/include/avahi-qt4/qt-watch.h",
+            "/usr/include/avahi-client/publish.h",
+            "/usr/include/avahi-client/lookup.h",
+            "/usr/include/avahi-client/client.h",
+            "/usr/include/avahi-glib/glib-malloc.h",
+            "/usr/include/avahi-glib/glib-watch.h",
+            "/usr/include/avahi-gobject/ga-service-resolver.h",
+            "/usr/include/avahi-gobject/ga-service-browser.h",
+            "/usr/include/avahi-gobject/ga-record-browser.h",
+            "/usr/include/avahi-gobject/ga-error.h",
+            "/usr/include/avahi-gobject/ga-enums.h",
+            "/usr/include/avahi-gobject/ga-entry-group.h",
+            "/usr/include/avahi-gobject/ga-client.h",
+            "/usr/include/avahi-compat-libdns_sd/dns_sd.h",
+            "/usr/include/avahi-ui/avahi-ui.h"
+        ],
+        "libs": [
+            "/usr/lib/libavahi-ui-gtk3.so",
+            "/usr/lib/libavahi-ui.so",
+            "/usr/lib/libdns_sd.so",
+            "/usr/lib/libavahi-gobject.so",
+            "/usr/lib/libavahi-glib.so",
+            "/usr/lib/libavahi-client.so",
+            "/usr/lib/libavahi-qt4.so",
+            "/usr/lib/libavahi-core.so",
+            "/usr/lib/libavahi-common.so"
+        ]
+    },
+    {
+        "package": "alsa-lib",
+        "size": "465160",
+        "includes": [
+            "/usr/include/sys/asoundlib.h",
+            "/usr/include/alsa/input.h",
+            "/usr/include/alsa/alisp.h",
+            "/usr/include/alsa/global.h",
+            "/usr/include/alsa/topology.h",
+            "/usr/include/alsa/pcm_ioplug.h",
+            "/usr/include/alsa/output.h",
+            "/usr/include/alsa/timer.h",
+            "/usr/include/alsa/error.h",
+            "/usr/include/alsa/asoundlib.h",
+            "/usr/include/alsa/pcm_external.h",
+            "/usr/include/alsa/seq_midi_event.h",
+            "/usr/include/alsa/version.h",
+            "/usr/include/alsa/use-case.h",
+            "/usr/include/alsa/pcm.h",
+            "/usr/include/alsa/seq.h",
+            "/usr/include/alsa/mixer_abst.h",
+            "/usr/include/alsa/asoundef.h",
+            "/usr/include/alsa/hwdep.h",
+            "/usr/include/alsa/seqmid.h",
+            "/usr/include/alsa/control.h",
+            "/usr/include/alsa/conf.h",
+            "/usr/include/alsa/pcm_rate.h",
+            "/usr/include/alsa/rawmidi.h",
+            "/usr/include/alsa/pcm_old.h",
+            "/usr/include/alsa/pcm_plugin.h",
+            "/usr/include/alsa/pcm_extplug.h",
+            "/usr/include/alsa/seq_event.h",
+            "/usr/include/alsa/mixer.h",
+            "/usr/include/alsa/control_external.h",
+            "/usr/include/alsa/sound/sb16_csp.h",
+            "/usr/include/alsa/sound/type_compat.h",
+            "/usr/include/alsa/sound/emu10k1.h",
+            "/usr/include/alsa/sound/tlv.h",
+            "/usr/include/alsa/sound/hdspm.h",
+            "/usr/include/alsa/sound/hdsp.h",
+            "/usr/include/alsa/sound/asound_fm.h",
+            "/usr/include/alsa/sound/asoc.h",
+            "/usr/include/alsa/sound/sscape_ioctl.h"
+        ],
+        "libs": [
+            "/usr/lib/libasound.so",
+            "/usr/lib/alsa-lib/smixer/smixer-python.so",
+            "/usr/lib/alsa-lib/smixer/smixer-hda.so",
+            "/usr/lib/alsa-lib/smixer/smixer-sbase.so",
+            "/usr/lib/alsa-lib/smixer/smixer-ac97.so"
+        ]
+    },
+    {
+        "package": "dbus-glib",
+        "size": "116644",
+        "includes": [
+            "/usr/include/dbus-1.0/dbus/dbus-glib-bindings.h",
+            "/usr/include/dbus-1.0/dbus/dbus-glib-lowlevel.h",
+            "/usr/include/dbus-1.0/dbus/dbus-glib.h",
+            "/usr/include/dbus-1.0/dbus/dbus-gvalue-parse-variant.h",
+            "/usr/include/dbus-1.0/dbus/dbus-gtype-specialized.h"
+        ],
+        "libs": [
+            "/usr/lib/libdbus-glib-1.so"
+        ]
+    },
+    {
+        "package": "gsasl",
+        "size": "273796",
+        "includes": [
+            "/usr/include/gsasl-compat.h",
+            "/usr/include/gsasl-mech.h",
+            "/usr/include/gsasl.h"
+        ],
+        "libs": [
+            "/usr/lib/libgsasl.so"
+        ]
+    }
+]

@@ -1,0 +1,151 @@
+#+TITLE: Benchmark collected by students
+
+** menglu
+
+
+Gzip
+
+| comment            | bug type                         | sympton            | patch or patched version                                                                      | title                                                                    |
+|--------------------+----------------------------------+--------------------+-----------------------------------------------------------------------------------------------+--------------------------------------------------------------------------|
+| only contain tests | access violation / segment fault | segfault           | http://git.savannah.gnu.org/cgit/gzip.git/commit/?id=3da56715dbc74c84b793f018a87e10992172f634 | tests: exercise the segfault fix                                         |
+| System dependent   | access violation / segment fault | segmentation fault | http://lists.gnu.org/archive/html/bug-gzip/2016-03/msg00055.html                              | bug#23133: gzip-1.7: Segmentation Fault with solarisstudio12.4 on Solari |
+| system dependent   | access violation / segment fault | coredump           | https://lists.gnu.org/archive/html/bug-gzip/2011-05/msg00008.html                             | gzip coredump in Solaris 10 - x86                                        |
+| shell script       | infinite loop                    | infinite loop      | http://lists.gnu.org/archive/html/bug-gzip/2007-03/msg00004.html                              | [PATCH] zdiff infinite loop                                              |
+| shell script       | infinite loop                    | hangs              | http://lists.gnu.org/archive/html/bug-gzip/2006-12/msg00065.html                              | Bug#404114: gzip: [zdiff] Infine loop in "while : do .. case $1 esac don |
+| ***                | access violation / segment fault | segfaults          | http://lists.gnu.org/archive/html/bug-gzip/2006-12/msg00017.html                              | [patch] fix segfault encountered while compressing xorg fonts            |
+
+
+
+findutils
+
+
+| comment                                             | bug type                         | sympton                  | patch or patched version                                                                           | title                                                                                                                                    |
+|-----------------------------------------------------+----------------------------------+--------------------------+----------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------|
+| patch too large                                     | access violation / segment fault | segfault                 | http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=265a49c66d25e4c6fad9cb97e266a5b6a5955c1f | Fix Savannah bug#27328; segfault if the initial exec for "find -exec" fails; and Savannah bug #27975: Infinite loop for -exec [..] {} +. |
+| * integer overflow -used 3                          | buffer overflow                  | overflow                 | http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=99d0ddf3cd30b2f178ef9abf1630f17f6ae4215b | Fix bug #23996 (integer overflow when parsing "-used 3").                                                                                |
+| --noop to noop                                      | access violation / segment fault | segfaulted               | http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=595060f28eb5f658fa8d98970959c617fab0f078 | Fix bug #48180: find: avoid segfault for internal '-noop' option                                                                         |
+| hard to trigger                                     | access violation / segment fault | coredumps                | http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=30056f0b4fa922b54cdd2747f29af67e2c729894 | Fix coredump bug introduced in the previous change.                                                                                      |
+| --noop same bug                                     | access violation / segment fault | segfaults                | http://lists.gnu.org/archive/html/findutils-patches/2016-06/msg00000.html                          | [bug #48180] find -noop segfaults                                                                                                        |
+| Solaris system dependent                            | null pointer dereference         | null pointer dereference | http://lists.gnu.org/archive/html/findutils-patches/2008-09/msg00002.html                          | findutils-4.5.2 NULL pointer dereferencing                                                                                               |
+| -used 3 same bug                                    | buffer overflow                  | overflow                 | http://lists.gnu.org/archive/html/findutils-patches/2008-09/msg00001.html                          | [PATCH] Fix savannah bug #23070 (integer overflow)                                                                                       |
+|                                                     | access violation / segment fault | memory corruption        | http://lists.gnu.org/archive/html/findutils-patches/2007-08/msg00008.html                          | patch for 20751 memory corruption in -ls                                                                                                 |
+|                                                     | access violation / segment fault | segfault                 | http://lists.gnu.org/archive/html/findutils-patches/2007-08/msg00010.html                          | [PATCH] Avoid segfault in -execdir when PATH is                                                                                          |
+|                                                     | buffer overflow                  | memory                   | http://lists.gnu.org/archive/html/findutils-patches/2007-08/msg00002.html                          | Re: [Findutils-patches] patch for #20662 memory leak                                                                                     |
+| I guess it is called somewhere through func pointer |                                  |                          | http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=c31c8d278fd2f205ea5c2103675bca39cba42c2f |                                                                                                                                          |
+
+findutils part 2
+
+
+|                 | bug type                         | sympton                  | patch or patch version                                                                             | title                                                                                                    |
+|-----------------+----------------------------------+--------------------------+----------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------|
+|                 | access violation / segment fault | segmentation faults      | can’t find patch link; http://savannah.gnu.org/bugs/index.php?45062#history                        | Bugs: bug #45062; Enabling CACHE_IDS causes segfaults                                                    |
+| patch too large | access violation / segment fault | segfaul                  | http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=4b7c8a448651fe96b72fd1e48fe0003778efe85a | Fix Savannah bug #38239, missing variable initialisation in locate                                       |
+| no patch        | buffer overflow                  | memory                   | http://savannah.gnu.org/bugs/?33207                                                                | bug #33207: updatedb (findutils-locate) has a memory leak on large nfs mounts; the index is not complete |
+| no patch        | buffer overflow                  | memory                   | http://savannah.gnu.org/bugs/?31961                                                                | bug #31961: Out-of-control memory usage when run against a large directory                               |
+| shell           | infinite loop                    | infinite loop            | http://savannah.gnu.org/bugs/?27975                                                                | Bugs: bug #27975; Infinite loop for -exec [..] {} +                                                      |
+| TBD             | null pointer dereference         | null pointer dereference | http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=0988a13794b025e2d57ec770e9746ec9196bc439 | bug #24283: find-4.5.2 -printf %TY causes NULL pointer dereference                                       |
+|                 | access violation / segment fault | segfaul                  | http://savannah.gnu.org/bugs/?24169                                                                | bug #24169: segfault: -neweraa without a following argument                                              |
+|                 | buffer overflow                  | overflow                 | http://savannah.gnu.org/bugs/?23996                                                                | bug #23996: arithmetic overflow when using -used                                                         |
+|                 | access violation / segment fault | segfault                 | http://savannah.gnu.org/bugs/?20834                                                                | bug #20834: find -execdir segfaults if PATH is not set.                                                  |
+|                 | access violation / segment fault | segfault                 | http://savannah.gnu.org/bugs/?20751                                                                | bug #20751: memory corruption in lib/listfile.c can cause segfault                                       |
+|                 | buffer overflow                  | memory                   | http://savannah.gnu.org/bugs/?20662                                                                | bug #20662: memory leak from gnulib dirname module                                                       |
+|                 | buffer overflow                  | buffer                   | http://savannah.gnu.org/bugs/?20014                                                                | bug #20014: buffer overrun in locate while reading old-format database                                   |
+|                 | access violation / segment fault | segfault                 | http://savannah.gnu.org/bugs/?17490                                                                | bug #17490: find segfaults when using -regex                                                             |
+|                 | access violation / segment fault | segfault                 | http://savannah.gnu.org/bugs/?15405                                                                | Bugs: bug #15405; Seg Fault                                                                              |
+|                 | infinite loop                    | infinite loop            | http://savannah.gnu.org/bugs/?13381                                                                | Bugs: bug #13381; infinite loop with -follow.                                                            |
+|                 | access violation / segment fault | segfault                 | http://savannah.gnu.org/bugs/?8255                                                                 | bug #8255: locate segfault with database >~ 10MB on Sun/Solarise                                         |
+
+** zahra
+
+*** grep
+crash
+http://git.savannah.gnu.org/cgit/grep.git/commit/?id=16f6616acaa4fcf44edbc3b56ca10fc06b07cf25
+http://git.savannah.gnu.org/cgit/grep.git/commit/?id=7be9969f6f4d6245dc4da99c2e1ae7ec7e027677
+http://savannah.gnu.org/bugs/index.php?27031
+
+
+hang
+http://git.savannah.gnu.org/cgit/grep.git/commit/?id=3ec7191fade64723fe9f6675dff8555c7cd9139d
+http://git.savannah.gnu.org/cgit/grep.git/commit/?id=adc240087453cffeb9dbc3119ad06286ea269c35
+http://savannah.gnu.org/bugs/?21342
+
+
+seg fault
+http://git.savannah.gnu.org/cgit/grep.git/commit/?id=81ca497366a639364ff2e0f159f7ce61b7dafff7
+http://git.savannah.gnu.org/cgit/grep.git/commit/?id=12c957f786b12a4dd116f9c40a715d671d17fa16
+http://git.savannah.gnu.org/cgit/grep.git/commit/?id=e0ac660a2c1c1484baeb27716d7aeb37431b4ca3 (not sure)
+http://savannah.gnu.org/bugs/?19491
+http://savannah.gnu.org/bugs/?16811
+http://savannah.gnu.org/bugs/?4531
+
+
+infloop
+http://git.savannah.gnu.org/cgit/grep.git/commit/?id=4965c7942ee355587d47624b226725184fea73c3
+
+memory leak
+http://savannah.gnu.org/bugs/?38500
+http://savannah.gnu.org/bugs/?21276 (not sure)
+http://savannah.gnu.org/bugs/?20286
+
+not enough space for read
+http://savannah.gnu.org/bugs/?25414
+
+
+
+
+*** Findutils
+
+
+Null pointer
+http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=0988a13794b025e2d57ec770e9746ec9196bc439
+http://savannah.gnu.org/bugs/?24283
+
+
+Segfault
+http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=265a49c66d25e4c6fad9cb97e266a5b6a5955c1f
+http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=8b8f40e39d0810f7e658cb23e4c431a55409495e
+http://savannah.gnu.org/bugs/index.php?38239
+http://savannah.gnu.org/bugs/?20751
+http://savannah.gnu.org/bugs/?17490
+
+hang
+http://savannah.gnu.org/bugs/?12044
+
+
+access permission
+http://savannah.gnu.org/bugs/?27213
+
+memory  leak(not sure related or not)
+http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=cdf4370ad42c4e3d714cef6ff6276b39f2f606dc
+
+excessive memory usage
+http://savannah.gnu.org/bugs/index.php?37356
+
+
+infinite loop
+http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=265a49c66d25e4c6fad9cb97e266a5b6a5955c1f
+http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=031d2db569063b51c6186bc0e6c666ad26e8c012
+http://savannah.gnu.org/bugs/?27975
+http://savannah.gnu.org/bugs/?13381
+
+
+core dump
+http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=51f6f611106a2e9d534a2a96976c5d7d2c1b61f2
+http://savannah.gnu.org/bugs/?27017
+http://savannah.gnu.org/bugs/?18310
+
+crash
+http://git.savannah.gnu.org/cgit/findutils.git/commit/?id=f7197f3a0682e6c9558ae339c783d31ea02053b7
+http://savannah.gnu.org/bugs/?23663
+
+
+buffer overflow
+http://savannah.gnu.org/bugs/index.php?40088
+
+*** httpd
+segfault
+https://bz.apache.org/bugzilla/show_bug.cgi?id=46671
+buffer overflow
+https://bz.apache.org/bugzilla/show_bug.cgi?id=41143
+https://bz.apache.org/bugzilla/show_bug.cgi?id=46765 (not sure)
+

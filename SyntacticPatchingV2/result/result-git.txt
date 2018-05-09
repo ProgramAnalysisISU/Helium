@@ -1,0 +1,1084 @@
+0
+file: /home/hebi/benchmark/git/abspath.c
+num func: 11
+...1
+file: /home/hebi/benchmark/git/advice.c
+num func: 6
+..2
+file: /home/hebi/benchmark/git/alias.c
+num func: 4
+..3
+file: /home/hebi/benchmark/git/alloc.c
+num func: 9
+..4
+file: /home/hebi/benchmark/git/apply.c
+num func: 145
+.............................5
+file: /home/hebi/benchmark/git/archive-tar.c
+num func: 20
+..6
+file: /home/hebi/benchmark/git/archive-zip.c
+num func: 20
+..7
+file: /home/hebi/benchmark/git/archive.c
+num func: 20
+...8
+file: /home/hebi/benchmark/git/argv-array.c
+num func: 9
+.9
+file: /home/hebi/benchmark/git/attr.c
+num func: 50
+xxxxxxxxxxxx10
+file: /home/hebi/benchmark/git/base85.c
+num func: 3
+.11
+file: /home/hebi/benchmark/git/bisect.c
+num func: 48
+............12
+file: /home/hebi/benchmark/git/blame.c
+num func: 57
+............13
+file: /home/hebi/benchmark/git/blob.c
+num func: 2
+14
+file: /home/hebi/benchmark/git/branch.c
+num func: 13
+.15
+file: /home/hebi/benchmark/git/builtin/add.c
+num func: 15
+.16
+file: /home/hebi/benchmark/git/builtin/am.c
+num func: 61
+.........17
+file: /home/hebi/benchmark/git/builtin/annotate.c
+num func: 1
+18
+file: /home/hebi/benchmark/git/builtin/apply.c
+num func: 1
+19
+file: /home/hebi/benchmark/git/builtin/archive.c
+num func: 3
+..20
+file: /home/hebi/benchmark/git/builtin/bisect--helper.c
+num func: 9
+21
+file: /home/hebi/benchmark/git/builtin/blame.c
+num func: 23
+...22
+file: /home/hebi/benchmark/git/builtin/branch.c
+num func: 16
+....23
+file: /home/hebi/benchmark/git/builtin/bundle.c
+num func: 1
+24
+file: /home/hebi/benchmark/git/builtin/cat-file.c
+num func: 16
+..25
+file: /home/hebi/benchmark/git/builtin/check-attr.c
+num func: 5
+.26
+file: /home/hebi/benchmark/git/builtin/check-ignore.c
+num func: 4
+27
+file: /home/hebi/benchmark/git/builtin/check-mailmap.c
+num func: 2
+28
+file: /home/hebi/benchmark/git/builtin/check-ref-format.c
+num func: 3
+.29
+file: /home/hebi/benchmark/git/builtin/checkout-index.c
+num func: 5
+.30
+file: /home/hebi/benchmark/git/builtin/checkout.c
+num func: 26
+...31
+file: /home/hebi/benchmark/git/builtin/clean.c
+num func: 22
+...32
+file: /home/hebi/benchmark/git/builtin/clone.c
+num func: 25
+........33
+file: /home/hebi/benchmark/git/builtin/column.c
+num func: 2
+.34
+file: /home/hebi/benchmark/git/builtin/commit-tree.c
+num func: 3
+35
+file: /home/hebi/benchmark/git/builtin/commit.c
+num func: 41
+..........36
+file: /home/hebi/benchmark/git/builtin/config.c
+num func: 16
+....37
+file: /home/hebi/benchmark/git/builtin/count-objects.c
+num func: 7
+38
+file: /home/hebi/benchmark/git/builtin/credential.c
+num func: 1
+39
+file: /home/hebi/benchmark/git/builtin/describe.c
+num func: 15
+.40
+file: /home/hebi/benchmark/git/builtin/diff-files.c
+num func: 1
+41
+file: /home/hebi/benchmark/git/builtin/diff-index.c
+num func: 1
+42
+file: /home/hebi/benchmark/git/builtin/diff-tree.c
+num func: 6
+..43
+file: /home/hebi/benchmark/git/builtin/diff.c
+num func: 10
+..44
+file: /home/hebi/benchmark/git/builtin/difftool.c
+num func: 17
+...45
+file: /home/hebi/benchmark/git/builtin/fast-export.c
+num func: 38
+.........46
+file: /home/hebi/benchmark/git/builtin/fetch-pack.c
+num func: 2
+.47
+file: /home/hebi/benchmark/git/builtin/fetch.c
+num func: 36
+....48
+file: /home/hebi/benchmark/git/builtin/fmt-merge-msg.c
+num func: 20
+...49
+file: /home/hebi/benchmark/git/builtin/for-each-ref.c
+num func: 1
+50
+file: /home/hebi/benchmark/git/builtin/fsck.c
+num func: 33
+........51
+file: /home/hebi/benchmark/git/builtin/gc.c
+num func: 15
+.52
+file: /home/hebi/benchmark/git/builtin/get-tar-commit-id.c
+num func: 1
+53
+file: /home/hebi/benchmark/git/builtin/grep.c
+num func: 29
+.........54
+file: /home/hebi/benchmark/git/builtin/hash-object.c
+num func: 5
+55
+file: /home/hebi/benchmark/git/builtin/help.c
+num func: 26
+xxx56
+file: /home/hebi/benchmark/git/builtin/index-pack.c
+num func: 58
+..................57
+file: /home/hebi/benchmark/git/builtin/init-db.c
+num func: 11
+58
+file: /home/hebi/benchmark/git/builtin/interpret-trailers.c
+num func: 7
+..59
+file: /home/hebi/benchmark/git/builtin/log.c
+num func: 57
+...........60
+file: /home/hebi/benchmark/git/builtin/ls-files.c
+num func: 20
+..61
+file: /home/hebi/benchmark/git/builtin/ls-remote.c
+num func: 2
+.62
+file: /home/hebi/benchmark/git/builtin/ls-tree.c
+num func: 3
+63
+file: /home/hebi/benchmark/git/builtin/mailinfo.c
+num func: 1
+.64
+file: /home/hebi/benchmark/git/builtin/mailsplit.c
+num func: 8
+.65
+file: /home/hebi/benchmark/git/builtin/merge-base.c
+num func: 9
+..66
+file: /home/hebi/benchmark/git/builtin/merge-file.c
+num func: 2
+.67
+file: /home/hebi/benchmark/git/builtin/merge-index.c
+num func: 4
+.68
+file: /home/hebi/benchmark/git/builtin/merge-ours.c
+num func: 1
+.69
+file: /home/hebi/benchmark/git/builtin/merge-recursive.c
+num func: 2
+..70
+file: /home/hebi/benchmark/git/builtin/merge-tree.c
+num func: 20
+....71
+file: /home/hebi/benchmark/git/builtin/merge.c
+num func: 39
+......72
+file: /home/hebi/benchmark/git/builtin/mktag.c
+num func: 3
+73
+file: /home/hebi/benchmark/git/builtin/mktree.c
+num func: 5
+.74
+file: /home/hebi/benchmark/git/builtin/mv.c
+num func: 5
+75
+file: /home/hebi/benchmark/git/builtin/name-rev.c
+num func: 13
+...76
+file: /home/hebi/benchmark/git/builtin/notes.c
+num func: 26
+...77
+file: /home/hebi/benchmark/git/builtin/pack-objects.c
+num func: 77
+..............78
+file: /home/hebi/benchmark/git/builtin/pack-redundant.c
+num func: 28
+.......79
+file: /home/hebi/benchmark/git/builtin/pack-refs.c
+num func: 1
+80
+file: /home/hebi/benchmark/git/builtin/patch-id.c
+num func: 8
+.81
+file: /home/hebi/benchmark/git/builtin/prune-packed.c
+num func: 4
+82
+file: /home/hebi/benchmark/git/builtin/prune.c
+num func: 6
+...83
+file: /home/hebi/benchmark/git/builtin/pull.c
+num func: 23
+.....84
+file: /home/hebi/benchmark/git/builtin/push.c
+num func: 20
+.....85
+file: /home/hebi/benchmark/git/builtin/read-tree.c
+num func: 7
+.86
+file: /home/hebi/benchmark/git/builtin/rebase--helper.c
+num func: 1
+87
+file: /home/hebi/benchmark/git/builtin/receive-pack.c
+num func: 54
+..........88
+file: /home/hebi/benchmark/git/builtin/reflog.c
+num func: 18
+....89
+file: /home/hebi/benchmark/git/builtin/remote-ext.c
+num func: 6
+..90
+file: /home/hebi/benchmark/git/builtin/remote-fd.c
+num func: 2
+91
+file: /home/hebi/benchmark/git/builtin/remote.c
+num func: 43
+.....92
+file: /home/hebi/benchmark/git/builtin/repack.c
+num func: 6
+...93
+file: /home/hebi/benchmark/git/builtin/replace.c
+num func: 15
+.94
+file: /home/hebi/benchmark/git/builtin/rerere.c
+num func: 3
+95
+file: /home/hebi/benchmark/git/builtin/reset.c
+num func: 11
+.96
+file: /home/hebi/benchmark/git/builtin/rev-list.c
+num func: 12
+..97
+file: /home/hebi/benchmark/git/builtin/rev-parse.c
+num func: 22
+.......98
+file: /home/hebi/benchmark/git/builtin/revert.c
+num func: 8
+99
+file: /home/hebi/benchmark/git/builtin/rm.c
+num func: 5
+.100
+file: /home/hebi/benchmark/git/builtin/send-pack.c
+num func: 3
+101
+file: /home/hebi/benchmark/git/builtin/shortlog.c
+num func: 13
+....102
+file: /home/hebi/benchmark/git/builtin/show-branch.c
+num func: 28
+.......103
+file: /home/hebi/benchmark/git/builtin/show-ref.c
+num func: 7
+...104
+file: /home/hebi/benchmark/git/builtin/stripspace.c
+num func: 2
+.105
+file: /home/hebi/benchmark/git/builtin/submodule--helper.c
+num func: 40
+............106
+file: /home/hebi/benchmark/git/builtin/symbolic-ref.c
+num func: 2
+107
+file: /home/hebi/benchmark/git/builtin/tag.c
+num func: 13
+..108
+file: /home/hebi/benchmark/git/builtin/unpack-file.c
+num func: 2
+.109
+file: /home/hebi/benchmark/git/builtin/unpack-objects.c
+num func: 18
+....110
+file: /home/hebi/benchmark/git/builtin/update-index.c
+num func: 37
+......111
+file: /home/hebi/benchmark/git/builtin/update-ref.c
+num func: 10
+.112
+file: /home/hebi/benchmark/git/builtin/update-server-info.c
+num func: 1
+.113
+file: /home/hebi/benchmark/git/builtin/upload-archive.c
+num func: 4
+114
+file: /home/hebi/benchmark/git/builtin/var.c
+num func: 6
+...115
+file: /home/hebi/benchmark/git/builtin/verify-commit.c
+num func: 4
+.116
+file: /home/hebi/benchmark/git/builtin/verify-pack.c
+num func: 2
+117
+file: /home/hebi/benchmark/git/builtin/verify-tag.c
+num func: 2
+118
+file: /home/hebi/benchmark/git/builtin/worktree.c
+num func: 16
+.119
+file: /home/hebi/benchmark/git/builtin/write-tree.c
+num func: 1
+120
+file: /home/hebi/benchmark/git/bulk-checkin.c
+num func: 8
+.121
+file: /home/hebi/benchmark/git/bundle.c
+num func: 13
+....122
+file: /home/hebi/benchmark/git/cache-tree.c
+num func: 25
+.....123
+file: /home/hebi/benchmark/git/checkout.c
+num func: 2
+124
+file: /home/hebi/benchmark/git/color.c
+num func: 19
+....125
+file: /home/hebi/benchmark/git/column.c
+num func: 16
+..126
+file: /home/hebi/benchmark/git/combine-diff.c
+num func: 31
+..........127
+file: /home/hebi/benchmark/git/commit.c
+num func: 98
+...................128
+file: /home/hebi/benchmark/git/common-main.c
+num func: 2
+x129
+file: /home/hebi/benchmark/git/compat/fopen.c
+num func: 1
+130
+file: /home/hebi/benchmark/git/compat/obstack.c
+num func: 0
+131
+file: /home/hebi/benchmark/git/compat/qsort_s.c
+num func: 2
+132
+file: /home/hebi/benchmark/git/compat/strlcpy.c
+num func: 1
+133
+file: /home/hebi/benchmark/git/compat/terminal.c
+num func: 4
+.134
+file: /home/hebi/benchmark/git/config.c
+num func: 143
+xxxxxxxxxxxxxxxxxxxxxxx135
+file: /home/hebi/benchmark/git/connect.c
+num func: 40
+...........136
+file: /home/hebi/benchmark/git/connected.c
+num func: 1
+.137
+file: /home/hebi/benchmark/git/convert.c
+num func: 54
+...........138
+file: /home/hebi/benchmark/git/copy.c
+num func: 4
+.139
+file: /home/hebi/benchmark/git/credential-cache--daemon.c
+num func: 10
+..140
+file: /home/hebi/benchmark/git/credential-cache.c
+num func: 5
+.141
+file: /home/hebi/benchmark/git/credential-store.c
+num func: 9
+142
+file: /home/hebi/benchmark/git/credential.c
+num func: 18
+.......143
+file: /home/hebi/benchmark/git/csum-file.c
+num func: 11
+..144
+file: /home/hebi/benchmark/git/ctype.c
+num func: 0
+145
+file: /home/hebi/benchmark/git/daemon.c
+num func: 43
+.........146
+file: /home/hebi/benchmark/git/date.c
+num func: 41
+...........147
+file: /home/hebi/benchmark/git/decorate.c
+num func: 5
+148
+file: /home/hebi/benchmark/git/diff-delta.c
+num func: 4
+.149
+file: /home/hebi/benchmark/git/diff-lib.c
+num func: 13
+.150
+file: /home/hebi/benchmark/git/diff-no-index.c
+num func: 8
+..151
+file: /home/hebi/benchmark/git/diff.c
+num func: 177
+.....................................152
+file: /home/hebi/benchmark/git/diffcore-break.c
+num func: 4
+.153
+file: /home/hebi/benchmark/git/diffcore-delta.c
+num func: 5
+.154
+file: /home/hebi/benchmark/git/diffcore-order.c
+num func: 6
+...155
+file: /home/hebi/benchmark/git/diffcore-pickaxe.c
+num func: 8
+156
+file: /home/hebi/benchmark/git/diffcore-rename.c
+num func: 16
+.157
+file: /home/hebi/benchmark/git/dir-iterator.c
+num func: 3
+158
+file: /home/hebi/benchmark/git/dir.c
+num func: 102
+..................159
+file: /home/hebi/benchmark/git/editor.c
+num func: 3
+.160
+file: /home/hebi/benchmark/git/entry.c
+num func: 13
+.....161
+file: /home/hebi/benchmark/git/environment.c
+num func: 24
+....162
+file: /home/hebi/benchmark/git/ewah/bitmap.c
+num func: 13
+.163
+file: /home/hebi/benchmark/git/ewah/ewah_bitmap.c
+num func: 27
+.....164
+file: /home/hebi/benchmark/git/ewah/ewah_io.c
+num func: 8
+..165
+file: /home/hebi/benchmark/git/ewah/ewah_rlw.c
+num func: 5
+..166
+file: /home/hebi/benchmark/git/exec_cmd.c
+num func: 10
+167
+file: /home/hebi/benchmark/git/fast-import.c
+num func: 110
+..........................168
+file: /home/hebi/benchmark/git/fetch-pack.c
+num func: 33
+......169
+file: /home/hebi/benchmark/git/fsck.c
+num func: 26
+..........170
+file: /home/hebi/benchmark/git/fsmonitor.c
+num func: 10
+...171
+file: /home/hebi/benchmark/git/gettext.c
+num func: 6
+xx172
+file: /home/hebi/benchmark/git/git.c
+num func: 12
+173
+file: /home/hebi/benchmark/git/gpg-interface.c
+num func: 10
+.....174
+file: /home/hebi/benchmark/git/graph.c
+num func: 41
+......175
+file: /home/hebi/benchmark/git/grep.c
+num func: 78
+.....................176
+file: /home/hebi/benchmark/git/hashmap.c
+num func: 23
+...177
+file: /home/hebi/benchmark/git/help.c
+num func: 20
+xxxxxx178
+file: /home/hebi/benchmark/git/hex.c
+num func: 8
+..179
+file: /home/hebi/benchmark/git/http-backend.c
+num func: 37
+.......180
+file: /home/hebi/benchmark/git/http-fetch.c
+num func: 1
+181
+file: /home/hebi/benchmark/git/http-push.c
+num func: 50
+..............182
+file: /home/hebi/benchmark/git/http-walker.c
+num func: 17
+....183
+file: /home/hebi/benchmark/git/http.c
+num func: 66
+............184
+file: /home/hebi/benchmark/git/ident.c
+num func: 24
+.......185
+file: /home/hebi/benchmark/git/imap-send.c
+num func: 40
+..x186
+file: /home/hebi/benchmark/git/kwset.c
+num func: 12
+..187
+file: /home/hebi/benchmark/git/levenshtein.c
+num func: 1
+188
+file: /home/hebi/benchmark/git/line-log.c
+num func: 56
+..........189
+file: /home/hebi/benchmark/git/line-range.c
+num func: 6
+..190
+file: /home/hebi/benchmark/git/list-objects-filter-options.c
+num func: 3
+191
+file: /home/hebi/benchmark/git/list-objects-filter.c
+num func: 9
+..192
+file: /home/hebi/benchmark/git/list-objects.c
+num func: 10
+.193
+file: /home/hebi/benchmark/git/ll-merge.c
+num func: 11
+..194
+file: /home/hebi/benchmark/git/lockfile.c
+num func: 9
+.195
+file: /home/hebi/benchmark/git/log-tree.c
+num func: 30
+.....196
+file: /home/hebi/benchmark/git/mailinfo.c
+num func: 40
+........197
+file: /home/hebi/benchmark/git/mailmap.c
+num func: 15
+..198
+file: /home/hebi/benchmark/git/match-trees.c
+num func: 10
+...199
+file: /home/hebi/benchmark/git/merge-blobs.c
+num func: 4
+.200
+file: /home/hebi/benchmark/git/merge-recursive.c
+num func: 58
+..............201
+file: /home/hebi/benchmark/git/merge.c
+num func: 3
+202
+file: /home/hebi/benchmark/git/mergesort.c
+num func: 3
+203
+file: /home/hebi/benchmark/git/mru.c
+num func: 3
+204
+file: /home/hebi/benchmark/git/name-hash.c
+num func: 31
+......205
+file: /home/hebi/benchmark/git/notes-cache.c
+num func: 5
+206
+file: /home/hebi/benchmark/git/notes-merge.c
+num func: 17
+..207
+file: /home/hebi/benchmark/git/notes-utils.c
+num func: 8
+..208
+file: /home/hebi/benchmark/git/notes.c
+num func: 46
+...........209
+file: /home/hebi/benchmark/git/object.c
+num func: 25
+...210
+file: /home/hebi/benchmark/git/oidmap.c
+num func: 7
+..211
+file: /home/hebi/benchmark/git/oidset.c
+num func: 4
+.212
+file: /home/hebi/benchmark/git/pack-bitmap-write.c
+num func: 24
+....213
+file: /home/hebi/benchmark/git/pack-bitmap.c
+num func: 34
+........214
+file: /home/hebi/benchmark/git/pack-check.c
+num func: 5
+215
+file: /home/hebi/benchmark/git/pack-objects.c
+num func: 5
+216
+file: /home/hebi/benchmark/git/pack-revindex.c
+num func: 5
+..217
+file: /home/hebi/benchmark/git/pack-write.c
+num func: 11
+.218
+file: /home/hebi/benchmark/git/packfile.c
+num func: 76
+.................219
+file: /home/hebi/benchmark/git/pager.c
+num func: 13
+x220
+file: /home/hebi/benchmark/git/parse-options-cb.c
+num func: 15
+...221
+file: /home/hebi/benchmark/git/parse-options.c
+num func: 19
+....222
+file: /home/hebi/benchmark/git/patch-delta.c
+num func: 1
+223
+file: /home/hebi/benchmark/git/patch-ids.c
+num func: 8
+.224
+file: /home/hebi/benchmark/git/path.c
+num func: 66
+..........225
+file: /home/hebi/benchmark/git/pathspec.c
+num func: 21
+......226
+file: /home/hebi/benchmark/git/pkt-line.c
+num func: 25
+....227
+file: /home/hebi/benchmark/git/preload-index.c
+num func: 3
+228
+file: /home/hebi/benchmark/git/pretty.c
+num func: 53
+............229
+file: /home/hebi/benchmark/git/prio-queue.c
+num func: 6
+..230
+file: /home/hebi/benchmark/git/progress.c
+num func: 13
+...231
+file: /home/hebi/benchmark/git/prompt.c
+num func: 2
+.232
+file: /home/hebi/benchmark/git/protocol.c
+num func: 4
+233
+file: /home/hebi/benchmark/git/quote.c
+num func: 22
+...234
+file: /home/hebi/benchmark/git/reachable.c
+num func: 9
+..235
+file: /home/hebi/benchmark/git/read-cache.c
+num func: 94
+................236
+file: /home/hebi/benchmark/git/ref-filter.c
+num func: 93
+..................237
+file: /home/hebi/benchmark/git/reflog-walk.c
+num func: 15
+.....238
+file: /home/hebi/benchmark/git/refs/files-backend.c
+num func: 69
+..............239
+file: /home/hebi/benchmark/git/refs/iterator.c
+num func: 22
+.....240
+file: /home/hebi/benchmark/git/refs/packed-backend.c
+num func: 49
+................241
+file: /home/hebi/benchmark/git/refs/ref-cache.c
+num func: 24
+..242
+file: /home/hebi/benchmark/git/refs.c
+num func: 123
+...................243
+file: /home/hebi/benchmark/git/remote-curl.c
+num func: 25
+....244
+file: /home/hebi/benchmark/git/remote-testsvn.c
+num func: 11
+...245
+file: /home/hebi/benchmark/git/remote.c
+num func: 104
+.....................246
+file: /home/hebi/benchmark/git/replace_object.c
+num func: 6
+.247
+file: /home/hebi/benchmark/git/repository.c
+num func: 12
+.248
+file: /home/hebi/benchmark/git/rerere.c
+num func: 48
+........249
+file: /home/hebi/benchmark/git/resolve-undo.c
+num func: 7
+.250
+file: /home/hebi/benchmark/git/revision.c
+num func: 107
+.....................251
+file: /home/hebi/benchmark/git/run-command.c
+num func: 60
+.............252
+file: /home/hebi/benchmark/git/send-pack.c
+num func: 14
+....253
+file: /home/hebi/benchmark/git/sequencer.c
+num func: 106
+..................x..254
+file: /home/hebi/benchmark/git/server-info.c
+num func: 13
+..255
+file: /home/hebi/benchmark/git/setup.c
+num func: 37
+.........256
+file: /home/hebi/benchmark/git/sh-i18n--envsubst.c
+num func: 14
+257
+file: /home/hebi/benchmark/git/sha1-array.c
+num func: 7
+.258
+file: /home/hebi/benchmark/git/sha1-lookup.c
+num func: 2
+259
+file: /home/hebi/benchmark/git/sha1_file.c
+num func: 91
+....................260
+file: /home/hebi/benchmark/git/sha1_name.c
+num func: 61
+..............261
+file: /home/hebi/benchmark/git/sha1dc/sha1.c
+num func: 14
+xx262
+file: /home/hebi/benchmark/git/sha1dc/ubc_check.c
+num func: 1
+263
+file: /home/hebi/benchmark/git/sha1dc_git.c
+num func: 2
+264
+file: /home/hebi/benchmark/git/shallow.c
+num func: 32
+..x...265
+file: /home/hebi/benchmark/git/shell.c
+num func: 6
+..266
+file: /home/hebi/benchmark/git/show-index.c
+num func: 1
+267
+file: /home/hebi/benchmark/git/sideband.c
+num func: 2
+..268
+file: /home/hebi/benchmark/git/sigchain.c
+num func: 5
+.269
+file: /home/hebi/benchmark/git/split-index.c
+num func: 15
+270
+file: /home/hebi/benchmark/git/strbuf.c
+num func: 61
+.............271
+file: /home/hebi/benchmark/git/streaming.c
+num func: 18
+.....272
+file: /home/hebi/benchmark/git/string-list.c
+num func: 25
+......273
+file: /home/hebi/benchmark/git/sub-process.c
+num func: 9
+274
+file: /home/hebi/benchmark/git/submodule-config.c
+num func: 36
+.........275
+file: /home/hebi/benchmark/git/submodule.c
+num func: 64
+.....................276
+file: /home/hebi/benchmark/git/symlinks.c
+num func: 13
+..277
+file: /home/hebi/benchmark/git/t/helper/test-chmtime.c
+num func: 2
+.278
+file: /home/hebi/benchmark/git/t/helper/test-config.c
+num func: 4
+279
+file: /home/hebi/benchmark/git/t/helper/test-ctype.c
+num func: 3
+280
+file: /home/hebi/benchmark/git/t/helper/test-date.c
+num func: 6
+281
+file: /home/hebi/benchmark/git/t/helper/test-delta.c
+num func: 1
+282
+file: /home/hebi/benchmark/git/t/helper/test-drop-caches.c
+num func: 3
+283
+file: /home/hebi/benchmark/git/t/helper/test-dump-cache-tree.c
+num func: 3
+284
+file: /home/hebi/benchmark/git/t/helper/test-dump-fsmonitor.c
+num func: 1
+285
+file: /home/hebi/benchmark/git/t/helper/test-dump-split-index.c
+num func: 2
+..286
+file: /home/hebi/benchmark/git/t/helper/test-dump-untracked-cache.c
+num func: 4
+.287
+file: /home/hebi/benchmark/git/t/helper/test-example-decorate.c
+num func: 1
+288
+file: /home/hebi/benchmark/git/t/helper/test-fake-ssh.c
+num func: 1
+289
+file: /home/hebi/benchmark/git/t/helper/test-genrandom.c
+num func: 1
+290
+file: /home/hebi/benchmark/git/t/helper/test-hashmap.c
+num func: 6
+.291
+file: /home/hebi/benchmark/git/t/helper/test-index-version.c
+num func: 1
+.292
+file: /home/hebi/benchmark/git/t/helper/test-lazy-init-name-hash.c
+num func: 4
+..293
+file: /home/hebi/benchmark/git/t/helper/test-line-buffer.c
+num func: 4
+..294
+file: /home/hebi/benchmark/git/t/helper/test-match-trees.c
+num func: 1
+.295
+file: /home/hebi/benchmark/git/t/helper/test-mergesort.c
+num func: 4
+.296
+file: /home/hebi/benchmark/git/t/helper/test-mktemp.c
+num func: 1
+297
+file: /home/hebi/benchmark/git/t/helper/test-online-cpus.c
+num func: 1
+298
+file: /home/hebi/benchmark/git/t/helper/test-parse-options.c
+num func: 5
+..299
+file: /home/hebi/benchmark/git/t/helper/test-path-utils.c
+num func: 6
+.300
+file: /home/hebi/benchmark/git/t/helper/test-prio-queue.c
+num func: 3
+301
+file: /home/hebi/benchmark/git/t/helper/test-read-cache.c
+num func: 1
+302
+file: /home/hebi/benchmark/git/t/helper/test-ref-store.c
+num func: 23
+.....303
+file: /home/hebi/benchmark/git/t/helper/test-regex.c
+num func: 2
+.304
+file: /home/hebi/benchmark/git/t/helper/test-revision-walking.c
+num func: 3
+305
+file: /home/hebi/benchmark/git/t/helper/test-run-command.c
+num func: 4
+306
+file: /home/hebi/benchmark/git/t/helper/test-scrap-cache-tree.c
+num func: 1
+307
+file: /home/hebi/benchmark/git/t/helper/test-sha1-array.c
+num func: 2
+308
+file: /home/hebi/benchmark/git/t/helper/test-sha1.c
+num func: 1
+309
+file: /home/hebi/benchmark/git/t/helper/test-sigchain.c
+num func: 4
+.310
+file: /home/hebi/benchmark/git/t/helper/test-strcmp-offset.c
+num func: 1
+311
+file: /home/hebi/benchmark/git/t/helper/test-string-list.c
+num func: 5
+.312
+file: /home/hebi/benchmark/git/t/helper/test-submodule-config.c
+num func: 2
+313
+file: /home/hebi/benchmark/git/t/helper/test-subprocess.c
+num func: 1
+314
+file: /home/hebi/benchmark/git/t/helper/test-svn-fe.c
+num func: 2
+.315
+file: /home/hebi/benchmark/git/t/helper/test-urlmatch-normalization.c
+num func: 1
+316
+file: /home/hebi/benchmark/git/t/helper/test-wildmatch.c
+num func: 1
+317
+file: /home/hebi/benchmark/git/t/helper/test-write-cache.c
+num func: 1
+318
+file: /home/hebi/benchmark/git/tag.c
+num func: 8
+..319
+file: /home/hebi/benchmark/git/tempfile.c
+num func: 19
+..320
+file: /home/hebi/benchmark/git/thread-utils.c
+num func: 2
+321
+file: /home/hebi/benchmark/git/tmp-objdir.c
+num func: 17
+..322
+file: /home/hebi/benchmark/git/trace.c
+num func: 21
+.....323
+file: /home/hebi/benchmark/git/trailer.c
+num func: 52
+.......324
+file: /home/hebi/benchmark/git/transport-helper.c
+num func: 38
+....325
+file: /home/hebi/benchmark/git/transport.c
+num func: 44
+...........326
+file: /home/hebi/benchmark/git/tree-diff.c
+num func: 13
+...327
+file: /home/hebi/benchmark/git/tree-walk.c
+num func: 30
+.....328
+file: /home/hebi/benchmark/git/tree.c
+num func: 12
+.329
+file: /home/hebi/benchmark/git/unix-socket.c
+num func: 6
+.330
+file: /home/hebi/benchmark/git/unpack-trees.c
+num func: 63
+...............331
+file: /home/hebi/benchmark/git/upload-pack.c
+num func: 26
+......332
+file: /home/hebi/benchmark/git/url.c
+num func: 9
+.333
+file: /home/hebi/benchmark/git/urlmatch.c
+num func: 9
+334
+file: /home/hebi/benchmark/git/usage.c
+num func: 23
+.......335
+file: /home/hebi/benchmark/git/userdiff.c
+num func: 8
+..336
+file: /home/hebi/benchmark/git/utf8.c
+num func: 23
+..337
+file: /home/hebi/benchmark/git/varint.c
+num func: 2
+338
+file: /home/hebi/benchmark/git/vcs-svn/fast_export.c
+num func: 25
+..339
+file: /home/hebi/benchmark/git/vcs-svn/line_buffer.c
+num func: 12
+..340
+file: /home/hebi/benchmark/git/vcs-svn/sliding_window.c
+num func: 5
+.341
+file: /home/hebi/benchmark/git/vcs-svn/svndiff.c
+num func: 17
+..342
+file: /home/hebi/benchmark/git/vcs-svn/svndump.c
+num func: 15
+..343
+file: /home/hebi/benchmark/git/version.c
+num func: 2
+x344
+file: /home/hebi/benchmark/git/versioncmp.c
+num func: 3
+345
+file: /home/hebi/benchmark/git/walker.c
+num func: 14
+....346
+file: /home/hebi/benchmark/git/wildmatch.c
+num func: 2
+.347
+file: /home/hebi/benchmark/git/worktree.c
+num func: 17
+.....348
+file: /home/hebi/benchmark/git/wrapper.c
+num func: 46
+..........349
+file: /home/hebi/benchmark/git/write_or_die.c
+num func: 4
+350
+file: /home/hebi/benchmark/git/ws.c
+num func: 8
+.351
+file: /home/hebi/benchmark/git/wt-status.c
+num func: 75
+.............352
+file: /home/hebi/benchmark/git/xdiff/xdiffi.c
+num func: 21
+..353
+file: /home/hebi/benchmark/git/xdiff/xemit.c
+num func: 9
+.354
+file: /home/hebi/benchmark/git/xdiff/xhistogram.c
+num func: 7
+..355
+file: /home/hebi/benchmark/git/xdiff/xmerge.c
+num func: 17
+....356
+file: /home/hebi/benchmark/git/xdiff/xpatience.c
+num func: 10
+...357
+file: /home/hebi/benchmark/git/xdiff/xprepare.c
+num func: 11
+...358
+file: /home/hebi/benchmark/git/xdiff/xutils.c
+num func: 17
+..359
+file: /home/hebi/benchmark/git/xdiff-interface.c
+num func: 16
+.360
+file: /home/hebi/benchmark/git/zlib.c
+num func: 17
+....

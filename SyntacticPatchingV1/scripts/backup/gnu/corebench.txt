@@ -1,0 +1,4 @@
+http://git.savannah.gnu.org/r/make.git
+http://git.savannah.gnu.org/r/grep.git
+http://git.savannah.gnu.org/r/findutils.git
+http://git.savannah.gnu.org/r/coreutils.git
